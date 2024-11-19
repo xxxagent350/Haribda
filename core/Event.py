@@ -1,3 +1,5 @@
+import asyncio
+
 class Event:
     def __init__(self):
         self.handlers = []
@@ -7,4 +9,4 @@ class Event:
 
     def trigger(self, *args, **kwargs):
         for handler in self.handlers:
-            handler(*args, **kwargs)
+            asyncio.create_task(handler(*args, **kwargs))
