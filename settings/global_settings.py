@@ -1,1 +1,3 @@
-token = '7843241546:AAFNa_63ImKD_Vw3KPxZf4wYdnDQD5075Ok'
+from settings import not_synchronized
+
+token = not_synchronized.bot_token

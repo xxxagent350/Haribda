@@ -75,3 +75,5 @@ Thumbs.db.meta
 
 # VS Code
 *.vscode
+settings/not_synchronized.py
+error_log.txt
