@@ -2,7 +2,7 @@ import asyncio
 import sqlite3
 import time
 import traceback
-
+from variables import event_manager
 
 from aiogram import Dispatcher, types, Router
 from aiogram.filters import Command
@@ -18,10 +18,8 @@ async def main():
     print("Deploying Leviathan")
     print("Leviathan launched successfully")
 
-    i= int('g')
 
-
-    await asyncio.create_task(dp.start_polling(bot, skip_updates=True))
+    await dp.start_polling(bot, skip_updates=True)
 
 
 # Функция для записи ошибок в файл

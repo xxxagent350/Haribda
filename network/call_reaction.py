@@ -1,7 +1,7 @@
-from variables.event_meneger import call_event
+from variables.event_manager import call_event
 from variables.bot import  dp
 
 #Обработчик текста
-@dp.callback_query()
+@dp.callback_query_handler()
 async def text_receiver(message):
     call_event.trigger(message = message)
