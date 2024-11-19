@@ -1,1 +1,0 @@
-from variables.event_meneger import call_event
