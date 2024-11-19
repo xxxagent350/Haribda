@@ -5,6 +5,8 @@ import time
 from aiogram import Dispatcher, types, Router
 from aiogram.filters import Command
 
+from core.time_converter import get_full_current_date
+
 from variables.bot import dp,bot
 
 
@@ -30,6 +32,6 @@ if __name__ == "__main__":
         try:
             asyncio.run(main())
         except Exception as error:
-            print('Error : ', error)
-            log_error_to_file('Error : ', error)
+            print(f'Error {get_full_current_date()} : ', error)
+            log_error_to_file(f'Error {get_full_current_date()} : ', error)
             #time.sleep(5)

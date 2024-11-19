@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def get_full_curent_date() -> str:
+def get_full_current_date() -> str:
     # Получение текущей даты и времени
     current_datetime = datetime.now()
     # Преобразование в строку
