@@ -1,4 +1,4 @@
-from core.Event import Event
+from models.event import Event
 
 from core.text_reactions.start import command_start
 

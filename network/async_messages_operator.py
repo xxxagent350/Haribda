@@ -1,10 +1,6 @@
 from variables.bot import bot
 import asyncio
-from main import subscribe_on_start
-
-@subscribe_on_start
-def test1():
-    print("Победоо")
+from aiogram.types import Message
 
 async def try_delete_message(chat_id, message_id) -> bool:
     try:
@@ -29,15 +25,14 @@ async def try_strong_edit_message_media(
     new_message_text,
     message_media,
     reply_markup=None,
-    max_edit_wait_time=5
-) -> bool:
+    max_edit_wait_time=1
+) -> (bool, int):
     try:
         # Запускаем редактирование сообщения
         task = asyncio.create_task(
             bot.edit_message_media(
                 chat_id=chat_id,
                 message_id=message_id,
-                text=new_message_text,
                 media=message_media,
                 reply_markup=reply_markup
             )
@@ -50,7 +45,7 @@ async def try_strong_edit_message_media(
         if task in done:
             await task  # Проверяем на исключения
             print("Успешно изменено")
-            return True
+            return True, message_id
 
         # Если задача не завершилась, отменяем ее и обрабатываем
         for pending_task in pending:
@@ -59,17 +54,20 @@ async def try_strong_edit_message_media(
         print("Не удалось изменить сообщение, перевысылаю...")
 
         # Удаляем старое сообщение
-        await bot.delete_message(chat_id=chat_id, message_id=message_id)
+        try:
+            await bot.delete_message(chat_id=chat_id, message_id=message_id)
+        except:
+            pass
         
         # Отправляем новое сообщение
-        await bot.send_message(
+        new_message_id: Message = await bot.send_message(
             chat_id=chat_id,
             text=new_message_text,
             reply_markup=reply_markup
         )
         print("Перевыслано успешно")
-        return True
+        return True, new_message_id
 
     except Exception as exception:
         print(f"$ Warning - message's {message_id} in chat {chat_id} could not be edited or replaced: {exception}")
-        return False
+        return False, None
