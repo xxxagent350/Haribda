@@ -1,25 +1,27 @@
+#импорт сторонних библиатек
 import asyncio
-import sqlite3
 import time
 import traceback
+
+#Инициализируем события
 from variables import event_manager
 
-from aiogram import Dispatcher, types, Router
-from aiogram.filters import Command
+#Запускаем реакторы
+from network import call_reaction,text_reaction
 
+#импорт кастомных функций
 from core.time_converter import get_full_current_date
 
+#импорт необходимых пременных
 from variables.bot import dp,bot
-
 
 
 
 async def main():
     print("Deploying Leviathan")
     print("Leviathan launched successfully")
-
-
     await dp.start_polling(bot, skip_updates=True)
+
 
 
 # Функция для записи ошибок в файл
@@ -31,6 +33,7 @@ def log_error_to_file(message):
 # Запуск процесса поллинга новых апдейтов
 
 if __name__ == "__main__":
+    log_error_to_file(f"\n\n\n\n\n{'-'*30}\n{' '*13}Start\n{'-'*30}")
     while True:
         try:
             asyncio.run(main())
