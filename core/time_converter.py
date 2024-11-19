@@ -1,6 +1,14 @@
-# Переводит секунды в string отображающий время
+from datetime import datetime
 
-def seconds_to_time_string(time_seconds, show_only_parts = 999):
+
+def get_full_curent_date() -> str:
+    # Получение текущей даты и времени
+    current_datetime = datetime.now()
+    # Преобразование в строку
+    return current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+# Переводит секунды в string отображающий время
+def seconds_to_time_string(time_seconds, show_only_parts = 999) -> str:
     if show_only_parts < 1:
         print("Ошибка в seconds_to_time_string(): show_only_parts не может быть менее 1")
         return ""
