@@ -1,5 +1,10 @@
 from variables.bot import bot
 import asyncio
+from main import subscribe_on_start
+
+@subscribe_on_start
+def test1():
+    print("Победоо")
 
 async def try_delete_message(chat_id, message_id) -> bool:
     try:
@@ -68,4 +73,3 @@ async def try_strong_edit_message_media(
     except Exception as exception:
         print(f"$ Warning - message's {message_id} in chat {chat_id} could not be edited or replaced: {exception}")
         return False
-
