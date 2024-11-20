@@ -39,7 +39,7 @@ def setup_shutdown():
 # Запуск main в цикле while true
 if __name__ == "__main__":
     setup_shutdown()
-    log_error_to_file(f"\n\n\n\n\n{'-'*30}\n{' '*13}Start\n{'-'*30}")
+    log_error_to_file(f"\n\n\n\n\n{'-'*30}\n{' '*13}Start {get_full_current_date()}\n{'-'*30}")
     while True:
         try:
             asyncio.run(main())
