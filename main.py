@@ -13,7 +13,7 @@ from network import call_reaction, text_reaction
 
 # Импорт кастомных функций
 from core.time_converter import get_full_current_date
-from a_libraru.log_error import log_error_to_file
+from a_library.log_error import log_error_to_file
 
 # Импорт необходимых переменных
 from variables.bot import dp,bot
