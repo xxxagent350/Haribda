@@ -4,7 +4,6 @@ import asyncio
 import signal
 import time
 import traceback
-from core.async_event import AsyncEvent
 
 # Инициализируем события
 from variables import event_manager
@@ -18,14 +17,6 @@ from a_libraru.log_error import log_error_to_file
 
 # Импорт необходимых переменных
 from variables.bot import dp,bot
-
-
-start_event = AsyncEvent()
-
-# Используйте @register_on_start для подписки на событие
-def subscribe_on_start(func):
-    start_event.subscribe(func)
-    return func
 
 async def main():
     print("Deploying Leviathan")

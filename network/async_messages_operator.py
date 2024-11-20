@@ -19,6 +19,12 @@ async def try_edit_message_text(chat_id, message_id, new_message_text) -> bool:
         print(f"$ Warning - message's {message_id} text in chat {chat_id} cannot be edited to '{new_message_text}': {exception}")
         return False
 
+async def test_edit():
+    message_id = 0
+    while True:
+        await asyncio.sleep(2)
+        #result, new_message_id = try_strong_edit_message_media(5609117794)
+
 async def try_strong_edit_message_media(
     chat_id,
     message_id,
