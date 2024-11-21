@@ -76,7 +76,7 @@ async def try_strong_edit_message_media(
 
         # Удаляем старое сообщение
         try:
-            await bot.delete_message(chat_id=chat_id, message_id=message_id)
+            asyncio.create_task(try_delete_message(chat_id=chat_id, message_id=message_id))
         except:
             pass
         
