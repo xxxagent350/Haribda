@@ -16,6 +16,7 @@ from network import call_reaction, text_reaction
 # Импорт кастомных функций
 from core.time_converter import get_full_current_date
 from a_library.log_error import log_error_to_file
+from DB_operators.BD_init import init_db
 
 # Импорт необходимых переменных
 from variables.bot import dp,bot
@@ -27,9 +28,9 @@ async def main():
     await dp.start_polling(bot, skip_updates=True)
 
 
-def on_shutdown(dp):
+async def on_shutdown(dp):
     print("Программа завершается... Ожидаю завершения всех задач.")
-    bot.close()
+    await bot.close()
 
 
 def setup_shutdown():
@@ -37,8 +38,8 @@ def setup_shutdown():
     signal.signal(signal.SIGTERM, lambda sig, frame: on_shutdown(dp))  # Для сигнала завершения процесса
 
 
-init_bd()
-init_users_table()
+init_db()
+
 
 # Запуск main в цикле while true
 if __name__ == "__main__":

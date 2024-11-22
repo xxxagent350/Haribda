@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from a_library.custom_translator import List_in_Str, Str_in_List
 
 # Имя файла базы данных
 DB_FILE = os.path.join(os.path.dirname(__file__), "local_database.db")
@@ -22,41 +23,42 @@ def init_db():
     except Exception as e:
         print(f"Ошибка при инициализации базы данных: {e}")
 
-def add_user(name, artefact=None, special_info=None):
+def add_user(user_id, name, artefact=None, special_info=None):
+    if artefact is None:
+        artefact = []
+    if special_info is None:
+        special_info = []
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
             # Добавляем пользователя
             cursor.execute("""
-                INSERT INTO example_table (name, artefact, special_info)
-                VALUES (?, ?, ?)
-            """, (name, artefact, special_info))
+                INSERT INTO example_table (id,name, artefact, special_info)
+                VALUES (?, ?, ?, ?)
+            """, (user_id, name, List_in_Str(artefact), List_in_Str(special_info),))
             print(f"Пользователь '{name}' успешно добавлен!")
     except Exception as e:
         print(f"Ошибка при добавлении пользователя: {e}")
 
-def get_all_users():
+def get_user(user_id):
+
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
-            # Получаем всех пользователей
-            cursor.execute("SELECT * FROM example_table")
-            users = cursor.fetchall()
-            return users
+
+            # Получаем всех пользователя
+            user = cursor.execute("SELECT * FROM example_table WHERE id = ?", (user_id,)).fetchone()
+
+            user = [x for x in user]
+            if user != None:
+                print("f : ",user)
+                user[2] = Str_in_List(user[2])
+                user[3] = Str_in_List(user[3])
+                return user, True
+            else:
+                return None, False
     except Exception as e:
         print(f"Ошибка при получении пользователей: {e}")
-        return []
+        return None ,False
 
-# Пример использования
-if __name__ == "__main__":
-    # Инициализация базы данных
-    init_db()
 
-    # Добавление пользователей
-    add_user("Alice", "Sword", "Leader of the group")
-    add_user("Bob", "Shield", "Protector")
-
-    # Вывод всех пользователей
-    users = get_all_users()
-    for user in users:
-        print(user)
