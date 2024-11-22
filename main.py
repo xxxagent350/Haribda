@@ -5,6 +5,8 @@ import signal
 import time
 import traceback
 
+
+
 # Инициализируем события
 from variables import event_manager
 
@@ -35,6 +37,8 @@ def setup_shutdown():
     signal.signal(signal.SIGTERM, lambda sig, frame: on_shutdown(dp))  # Для сигнала завершения процесса
 
 
+init_bd()
+init_users_table()
 
 # Запуск main в цикле while true
 if __name__ == "__main__":
