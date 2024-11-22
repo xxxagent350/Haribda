@@ -42,7 +42,7 @@ def add_grid(
     cell_count,
     grid_thickness=2,
     font_size=32,
-    font_offset = 3,
+    font_offset = 5,
     grid_color=(0, 0, 0, 50),
     text_color=(0, 0, 0, 100)
 ):
@@ -107,7 +107,7 @@ def generate_map(map = None, resolution = 2048):
 
     # Добавляем корабль
     ship_image_path = images_operator.get_image_path_from_ship_name(f"ship {random.randint(1, 5)}")  # Заменить на путь к твоему изображению
-    add_ship(base_image, ship_image_path, position=(center.x, center.y), scale=0.4, rotation=-90)
+    add_ship(base_image, ship_image_path, position=(center.x, center.y), scale=0.4, rotation=0)
 
     # Добавляем сетку
     add_grid(base_image, 11)
