@@ -7,7 +7,8 @@ class ActionType(Enum):
     dive = 2
 
 
-class Action():
-    def __init__(self, action_type, value):
+class Action:
+    def __init__(self, object_, action_type, value):
+        self.object_ = object_
         self.action_type = action_type
         self.value = value
