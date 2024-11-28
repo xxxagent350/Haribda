@@ -20,11 +20,12 @@ from DB_operators.BD_init import init_db
 
 # Импорт необходимых переменных
 from variables.bot import dp,bot
+from mechanics.game_core import process_game
 
 async def main():
-    print("Deploying Leviathan")
-    print("Leviathan launched successfully")
+    asyncio.create_task(process_game())
     await bot.delete_webhook(drop_pending_updates=True)
+    print("Leviathan launched successfully")
     await dp.start_polling(bot, skip_updates=True)
 
 
