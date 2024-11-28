@@ -41,7 +41,6 @@ def add_user(user_id, name, artefact=None, special_info=None):
         print(f"Ошибка при добавлении пользователя: {e}")
 
 def get_user(user_id):
-
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
@@ -61,4 +60,29 @@ def get_user(user_id):
         print(f"Ошибка при получении пользователей: {e}")
         return None ,False
 
+def save_user(user_id, name=None, artefact=None, special_info=None):
+    try:
+        with sqlite3.connect(DB_FILE) as conn:
+            cursor = conn.cursor()
+
+            # Проверяем, существует ли пользователь
+            existing_user = cursor.execute("SELECT * FROM example_table WHERE id = ?", (user_id,)).fetchone()
+            if not existing_user:
+                print(f"Пользователь с ID {user_id} не найден!")
+                return False
+
+            # Обновляем только переданные поля
+            if name is not None:
+                cursor.execute("UPDATE example_table SET name = ? WHERE id = ?", (name, user_id))
+            if artefact is not None:
+                cursor.execute("UPDATE example_table SET artefact = ? WHERE id = ?", (List_in_Str(artefact), user_id))
+            if special_info is not None:
+                cursor.execute("UPDATE example_table SET special_info = ? WHERE id = ?", (List_in_Str(special_info), user_id))
+
+            print(f"Пользователь с ID {user_id} успешно обновлен!")
+            return True
+
+    except Exception as e:
+        print(f"Ошибка при обновлении пользователя: {e}")
+        return False
 
