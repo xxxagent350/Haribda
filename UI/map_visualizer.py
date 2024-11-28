@@ -32,9 +32,10 @@ def add_ship(base_image, ship_image_path, position, scale=1.0, rotation=0):
     base_image.paste(ship_img, position, mask=ship_img)  # mask=ship_img сохраняет прозрачность
 
 
-def add_island(base_image, points, color="#D2B48C"):
+def add_island(base_image, island):
+    color="#D2B48C"
     draw = ImageDraw.Draw(base_image)
-    draw.polygon(points, fill=color)
+    draw.polygon(island.local_points, fill=color)
 
 
 def add_grid(
@@ -95,15 +96,14 @@ def add_grid(
     base_image.alpha_composite(text_layer)
 
 
-def generate_map(map = None, resolution = 2048):
+def generate_map(map, resolution = 2048):
     width, height = resolution, resolution  # Размер карты
     base_image = create_background(width, height)
 
     center = Vector2(resolution / 2, resolution / 2)
 
     # Добавляем остров
-    island_points = [(200, 300), (300, 200), (400, 260), (360, 400), (240, 360)]
-    add_island(base_image, island_points)
+    add_island(base_image, island)
 
     # Добавляем корабль
     ship_image_path = images_operator.get_image_path_from_ship_name(f"ship {random.randint(1, 5)}")  # Заменить на путь к твоему изображению

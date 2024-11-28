@@ -1,6 +1,5 @@
 /.idea/
 /.venv/
-/.run/
 */__pycache__/
 /__pycache__/
 UpgradeLog.htm

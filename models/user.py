@@ -8,6 +8,7 @@ class User:
         self.name = ' ___ '
         self.artefacts = []
         self.special_info = []
+        self.controlled_ship = None
 
         user, examination = get_user(user_id)
 

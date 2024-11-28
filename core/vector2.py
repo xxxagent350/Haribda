@@ -7,3 +7,6 @@ class Vector2:
     def move(self, delta_pos):
         self.x += delta_pos.x
         self.y += delta_pos.y
+
+    def to_str(self):
+        return f'Vector2({self.x}, {self.y})'

@@ -21,24 +21,32 @@ def add_map(map_):
 
 
 async def process_game():
+    if step_delay % short_step_delay != 0:
+        raise Exception("$ Невозможно запустить game_core.process_game, так как step_delay не кратен short_step_delay, а это условие обязательно")
+
     global maps
 
     test_map = Map()
     test_ship = Ship(sprite_name=f"ship {random.randint(1, 5)}", position=Vector2(2, 5), rotation=90, max_hp=100)
     test_action = Action(object_=test_ship, action_type=ActionType.move, value=0)
-    test_map.delayed_actions.append(test_action)
+    test_map.add_new_object(test_ship)
 
-    test_map.objects.append(test_action)
+    test_map.add_new_delayed_action(test_action)
     maps = []
     add_map(test_map)
 
+    short_step_num = 0
+    short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
     while game_active:
-        await asyncio.sleep(step_delay)
+        await asyncio.sleep(short_step_delay)
         for map_ in maps:
-            process_map_iteration(map_)
+            process_map_iteration(map_, True)
+            short_step_num += 1
+            if short_step_num >= short_steps_in_basic_step:
+                process_map_iteration(map_, False)
 
 
-def process_map_iteration(map_):
+def process_map_iteration(map_, short_update):
     for delayed_action in map_.delayed_actions:
         object_ = delayed_action.object_
         action_type = delayed_action.action_type
@@ -52,6 +60,9 @@ def process_map_iteration(map_):
 
         # Удаляем это действие из списка ожидаемых действий, так как только что выполнили его
         map_.delayed_actions.remove(delayed_action)
-        print(map_.delayed_actions)
+
+        # Помечаем также квадрат на котором стоит объект сейчас на случай если он сдвинулся
         map_.add_changed_square(object_)
-        print(map_.delayed_actions)
+
+
+
