@@ -17,7 +17,7 @@ async def command_start(message: types.Message):
     if message.text == "/start":
         caption = "Добро пожалывать. Готов к погружению?"
 
-        photo = types.FSInputFile("image.jpg")
+        photo = types.FSInputFile("image.webp")
 
         # Отправляем фото с текстом и кнопками
         await message.bot.send_photo(
