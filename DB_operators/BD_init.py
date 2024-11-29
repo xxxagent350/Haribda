@@ -86,3 +86,17 @@ def save_user(user_id, name=None, artefact=None, special_info=None):
         print(f"Ошибка при обновлении пользователя: {e}")
         return False
 
+def get_all_user_ids():
+    """
+    Возвращает список всех ID зарегистрированных пользователей.
+    """
+    try:
+        with sqlite3.connect(DB_FILE) as conn:
+            cursor = conn.cursor()
+            # Получаем все ID из таблицы example_table
+            user_ids = cursor.execute("SELECT id FROM example_table").fetchall()
+            # Преобразуем список кортежей в список чисел
+            return [user_id[0] for user_id in user_ids]
+    except Exception as e:
+        print(f"Ошибка при получении списка ID пользователей: {e}")
+        return []
