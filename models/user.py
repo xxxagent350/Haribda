@@ -4,12 +4,14 @@ from DB_operators.BD_init import add_user, get_user, save_user
 # Класс пользователя, хранящий его достижения, настройки, и т. д.
 class User:
     def __init__(self, user_id):
+        #Тут часто используемые
         self.id = user_id
         self.name = ' ___ '
         self.artefacts = []
         self.special_info = []
         self.controlled_ship = None
 
+        #получение информации об игроке с таким ID из базы данных
         user, examination = get_user(user_id)
 
         if examination:
