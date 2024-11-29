@@ -32,7 +32,10 @@ async def process_game():
 
     test_map = Map()
     test_user = User(5609117794)
+
     test_ship = Ship(owner=test_user, sprite_name=f"ship {random.randint(1, 5)}", position=Vector2(2, 5), rotation=90, max_hp=100)
+    test_user.controlled_ship = test_ship
+    test_user.current_map = test_map
     test_action = Action(object_=test_ship, action_type=ActionType.move, value=0)
     test_map.add_new_object(test_ship)
 
@@ -94,7 +97,7 @@ def update_visual_map(map_):
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():
-        visualize_map_to_user(user)
+        asyncio.create_task(visualize_map_to_user(user))
 
     # Удаляем "погашенные" квадраты из списка
     for showed_changed_square in showed_changed_squares.keys():

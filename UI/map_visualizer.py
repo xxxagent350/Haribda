@@ -1,122 +1,85 @@
-from PIL import Image, ImageDraw, ImageFont
-from core import images_operator
+import time
+import cv2
+import numpy as np
+from aiogram import types
 import random
-from os import path
-
+import asyncio
+from core import images_operator
 from core.vector2 import Vector2
-from project_path import get_global_path
+from variables.bot import bot
 
 
-def create_background(width, height, color="#388dfc"):
-    img = Image.new("RGBA", (width, height), color)
-    return img
+def create_background(width, height, color=(56, 141, 252)):  # RGB вместо HEX
+    """Создание фона."""
+    return np.full((height, width, 3), color, dtype=np.uint8)
 
 
 def add_ship(base_image, ship_image_path, position, scale=1.0, rotation=0):
-    ship_img = Image.open(ship_image_path).convert("RGBA")
+    """Добавление корабля на изображение."""
+    ship_img = cv2.imread(ship_image_path, cv2.IMREAD_UNCHANGED)  # Чтение с альфа-каналом
+    if ship_img is None:
+        raise FileNotFoundError(f"Файл {ship_image_path} не найден")
 
-    # Масштабируем
+    # Масштабируем изображение корабля
     if scale != 1.0:
-        new_size = (int(ship_img.width * scale), int(ship_img.height * scale))
-        ship_img = ship_img.resize(new_size, Image.Resampling.LANCZOS)
+        new_size = (int(ship_img.shape[1] * scale), int(ship_img.shape[0] * scale))
+        ship_img = cv2.resize(ship_img, new_size, interpolation=cv2.INTER_LANCZOS4)
 
-    # Поворачиваем
-    ship_img = ship_img.rotate(rotation, expand=True)
-    print(f'w: {ship_img.width}, h: {ship_img.height}')
+    # Поворот изображения
+    if rotation != 0:
+        center = (ship_img.shape[1] // 2, ship_img.shape[0] // 2)
+        rotation_matrix = cv2.getRotationMatrix2D(center, rotation, 1)
+        ship_img = cv2.warpAffine(ship_img, rotation_matrix, (ship_img.shape[1], ship_img.shape[0]),
+                                  flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0, 0))
 
-    # Изменяем позицию чтобы было относительно центра картинки, а не верхнего левого края
-    position = (position[0] - (ship_img.width / 2), position[1] - (ship_img.height / 2))
-    position = (int(position[0]), int(position[1]))
+    # Определяем позицию для наложения
+    x, y = int(position[0] - ship_img.shape[1] / 2), int(position[1] - ship_img.shape[0] / 2)
 
-    # Вставляем на карту
-    base_image.paste(ship_img, position, mask=ship_img)  # mask=ship_img сохраняет прозрачность
-
-
-def add_island(base_image, island):
-    color="#D2B48C"
-    draw = ImageDraw.Draw(base_image)
-    draw.polygon(island.local_points, fill=color)
-
-
-def add_grid(
-    base_image,
-    cell_count,
-    grid_thickness=2,
-    font_size=32,
-    font_offset = 5,
-    grid_color=(0, 0, 0, 50),
-    text_color=(0, 0, 0, 100)
-):
-    width, height = base_image.size
-
-    # Создаем временный слой с прозрачной сеткой
-    grid_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(grid_layer)
-
-    # Размер клетки
-    cell_width = width / cell_count
-    cell_height = height / cell_count
-
-    # Рисуем вертикальные линии
-    for i in range(1, cell_count + 1):
-        x = int(i * cell_width)
-        draw.line([(x, 0), (x, height)], fill=grid_color, width=grid_thickness)
-
-    # Рисуем горизонтальные линии
-    for i in range(1, cell_count + 1):
-        y = int(i * cell_height)
-        draw.line([(0, y), (width, y)], fill=grid_color, width=grid_thickness)
-
-    # Накладываем слой сетки на основное изображение
-    base_image.alpha_composite(grid_layer)
-
-    # Добавляем подписи (буквы и цифры)
-    try:
-        font = ImageFont.truetype("arial.ttf", font_size)
-    except IOError:
-        font = ImageFont.load_default()
-
-    text_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))  # Отдельный слой для текста
-    text_draw = ImageDraw.Draw(text_layer)
-
-    for i in range(cell_count):
-        # Буквы сверху и снизу
-        letter = chr(65 + i)  # 'A', 'B', ...
-        x = int(i * cell_width + cell_width / 2 - font_size / 2)
-        text_draw.text((x, font_offset), letter, fill=text_color, font=font)
-        text_draw.text((x, height - font_size - font_offset), letter, fill=text_color, font=font)
-
-        # Цифры слева и справа
-        number = str(i + 1)
-        y = int(i * cell_height + cell_height / 2 - font_size / 2)
-        text_draw.text((font_offset, y), number, fill=text_color, font=font)
-        text_draw.text((width - font_size - font_offset, y), number, fill=text_color, font=font)
-
-    # Накладываем слой с текстом на основное изображение
-    base_image.alpha_composite(text_layer)
+    # Наложение корабля с учетом альфа-канала
+    alpha = ship_img[:, :, 3] / 255.0  # Нормализованный альфа-канал
+    for c in range(3):  # Каналы RGB
+        base_image[y:y + ship_img.shape[0], x:x + ship_img.shape[1], c] = (
+            alpha * ship_img[:, :, c] + (1 - alpha) * base_image[y:y + ship_img.shape[0], x:x + ship_img.shape[1], c]
+        )
 
 
-def visualize_map_to_user(user):
+def add_grid(base_image, cell_count, grid_thickness=2, grid_color=(0, 0, 0)):
+    """Добавление сетки на изображение."""
+    height, width = base_image.shape[:2]
+    cell_width = width // cell_count
+    cell_height = height // cell_count
+
+    # Рисуем линии сетки
+    for i in range(1, cell_count):
+        x = i * cell_width
+        y = i * cell_height
+        cv2.line(base_image, (x, 0), (x, height), grid_color, grid_thickness)
+        cv2.line(base_image, (0, y), (width, y), grid_color, grid_thickness)
+
+
+async def visualize_map_to_user(user):
+    """Генерация карты и отправка пользователю."""
+    start_time = time.time()
     resolution = 2048
     width, height = resolution, resolution  # Размер карты
+
+    # Создаем фон
     base_image = create_background(width, height)
 
+    # Определяем центр
     center = Vector2(resolution / 2, resolution / 2)
 
-    # Добавляем остров
-    #add_island(base_image, island)
-
     # Добавляем корабль
-    ship_image_path = images_operator.get_image_path_from_ship_name(f"ship {random.randint(1, 5)}")  # Заменить на путь к твоему изображению
+    ship_image_path = images_operator.get_image_path_from_ship_name(f"ship {random.randint(1, 5)}")
     add_ship(base_image, ship_image_path, position=(center.x, center.y), scale=0.4, rotation=0)
 
     # Добавляем сетку
     add_grid(base_image, 11)
 
-    # Сохраняем изображение
-    map_path = get_global_path(path.join("cache", "map.png"))
-    base_image.save(map_path)
-    print(f"Карта сохранена в {map_path}")
+    # Кодируем изображение в память
+    _, buffer = cv2.imencode('.png', base_image)
+    image_bytes = buffer.tobytes()
 
-
-#visualize_map_to_user()
+    # Отправляем изображение пользователю
+    asyncio.create_task(bot.send_photo(chat_id=user.id, photo=types.BufferedInputFile(image_bytes, filename="map.png")))
+    print(f'Время генерации: {(time.time() - start_time) * 1000:.1f} мс')
