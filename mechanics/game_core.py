@@ -1,10 +1,14 @@
 import asyncio
 import random
 
+from aiogram.filters import and_f
+
 from core.vector2 import Vector2
 from core.action import ActionType, Action
+from UI.map_visualizer import visualize_map_to_user
 
 # Импорт объектов карты
+from models.user import User
 from models.world_objects.map import Map
 from models.world_objects.ship import Ship
 from models.world_objects.island import Island
@@ -27,7 +31,8 @@ async def process_game():
     global maps
 
     test_map = Map()
-    test_ship = Ship(sprite_name=f"ship {random.randint(1, 5)}", position=Vector2(2, 5), rotation=90, max_hp=100)
+    test_user = User(5609117794)
+    test_ship = Ship(owner=test_user, sprite_name=f"ship {random.randint(1, 5)}", position=Vector2(2, 5), rotation=90, max_hp=100)
     test_action = Action(object_=test_ship, action_type=ActionType.move, value=0)
     test_map.add_new_object(test_ship)
 
@@ -44,10 +49,18 @@ async def process_game():
             short_step_num += 1
             if short_step_num >= short_steps_in_basic_step:
                 process_map_iteration(map_, False)
+                short_step_num = 0
+
+            update_visual_map(map_)
 
 
 def process_map_iteration(map_, short_update):
-    for delayed_action in map_.delayed_actions:
+    if not short_update:
+        delayed_actions_list = map_.delayed_actions
+    else:
+        delayed_actions_list = map_.short_delayed_actions
+
+    for delayed_action in delayed_actions_list:
         object_ = delayed_action.object_
         action_type = delayed_action.action_type
 
@@ -56,7 +69,7 @@ def process_map_iteration(map_, short_update):
             if type(object_) == Ship:
                 match delayed_action.value:
                     case 0: # Вверх
-                        object_.position.move(Vector2(0, 1))
+                        object_.position.add(Vector2(0, 1))
 
         # Удаляем это действие из списка ожидаемых действий, так как только что выполнили его
         map_.delayed_actions.remove(delayed_action)
@@ -65,4 +78,24 @@ def process_map_iteration(map_, short_update):
         map_.add_changed_square(object_)
 
 
+def update_visual_map(map_):
+    showed_changed_squares = dict() # Сюда добавляем квадраты на карте, которые уже были "погашены", то есть игроки их увидели
+    users_to_update_map = dict()
+    for object_ in map_.objects:
+        if type(object_) == Ship and type(object_.owner) == User:
+            min_view_limits = object_.position.summ(Vector2(-object_.field_of_view, -object_.field_of_view))
+            max_view_limits = object_.position.summ(Vector2(object_.field_of_view, object_.field_of_view))
 
+            for changed_square in map_.changed_squares:
+                # Проверка лежит ли изменённый квадрат в области видимости игрока
+                if min_view_limits.x <= changed_square.x <= max_view_limits.x and min_view_limits.y <= changed_square.y <= max_view_limits.y:
+                    showed_changed_squares[Vector2(changed_square.x, changed_square.y)] = True
+                    users_to_update_map[object_.owner] = True
+
+    # Отсылаем карты заново кому надо
+    for user in users_to_update_map.keys():
+        visualize_map_to_user(user)
+
+    # Удаляем "погашенные" квадраты из списка
+    for showed_changed_square in showed_changed_squares.keys():
+        map_.changed_squares = [changed_square for changed_square in map_.changed_squares if not changed_square.equals(showed_changed_square)]
