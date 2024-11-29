@@ -9,7 +9,6 @@ class User:
         self.name = ' ___ '
         self.artefacts = []
         self.special_info = []
-        self.controlled_ship = None
 
         #получение информации об игроке с таким ID из базы данных
         user, examination = get_user(user_id)
