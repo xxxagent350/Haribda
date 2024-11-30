@@ -22,10 +22,9 @@ async def arrow(message: types.CallbackQuery):
 
     elif message.data == "🢁":
         # Верх
-        await message.message.bot.send_message(
-            chat_id=message.message.chat.id,
-            text="Стрелочка направлена вверх"
-        )
+
+
+
 
     elif message.data == "🢀":
         # Влево

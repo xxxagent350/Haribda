@@ -16,14 +16,15 @@ def init_db():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     artefact TEXT,
-                    special_info TEXT
+                    special_info TEXT,
+                    current_map INTEGER 
                 )
             """)
             print("Таблица успешно создана!")
     except Exception as e:
         print(f"Ошибка при инициализации базы данных: {e}")
 
-def add_user(user_id, name, artefact=None, special_info=None):
+def add_user(user_id, name, artefact=None, special_info=None, current_map = None):
     if artefact is None:
         artefact = []
     if special_info is None:
@@ -33,9 +34,9 @@ def add_user(user_id, name, artefact=None, special_info=None):
             cursor = conn.cursor()
             # Добавляем пользователя
             cursor.execute("""
-                INSERT INTO example_table (id,name, artefact, special_info)
-                VALUES (?, ?, ?, ?)
-            """, (user_id, name, List_in_Str(artefact), List_in_Str(special_info),))
+                INSERT INTO example_table (id,name, artefact, special_info,current_map)
+                VALUES (?, ?, ?, ?, ?)
+            """, (user_id, name, List_in_Str(artefact), List_in_Str(special_info),current_map,))
             print(f"Пользователь '{name}' успешно добавлен!")
     except Exception as e:
         print(f"Ошибка при добавлении пользователя: {e}")

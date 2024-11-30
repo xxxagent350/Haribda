@@ -10,21 +10,21 @@ class User:
         self.artefacts = []
         self.special_info = []
         self.controlled_ship = None
-        self.current_map = None
+        self.current_map = 0
         self.map_message_id = None
 
         #получение информации об игроке с таким ID из базы данных
         user, examination = get_user(user_id)
 
         if examination:
-            self.name, self.artefacts, self.special_info = user[1:]
+            self.name, self.artefacts, self.special_info, self.current_map  = user[1:]
         else:
             self.__new_user()
-        print(self.name, self.artefacts, self.special_info)
+
 
 
     def __new_user(self, name = "No name", artefacts=None, special_info = None):
         add_user(self.id,name)
 
     def save_user(self):
-        save_user(self.id, self.name , self.artefacts, self.special_info)
+        save_user(self.id, self.name , self.artefacts, self.special_info, self.current_map)
