@@ -50,8 +50,17 @@ async def process_game():
     short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
     while game_active:
         await asyncio.sleep(short_step_delay)
+<<<<<<< HEAD
+<<<<<<< HEAD
         for map_ in maps:
             process_map_iteration(maps[map_], True)
+=======
+        for map_ in maps.values():
+=======
+        for map_ in maps:
+>>>>>>> e9f1972b752a9721ad4ca748f0b53a25e5786905
+            process_map_iteration(map_, True)
+>>>>>>> a5a5164bd8d564b49d97692969fb36b4220c0843
             short_step_num += 1
             if short_step_num >= short_steps_in_basic_step:
                 process_map_iteration(maps[map_], False)
