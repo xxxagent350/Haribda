@@ -1,7 +1,13 @@
 from aiogram import types
 from UI.inline_keyboard_buttons import button_controller
+from core.map_list import maps
+from core.action import Action,ActionType
+from core.user_list import user_list
+
+
 
 async def arrow(message: types.CallbackQuery):
+    global maps
     """
         Обработчик текстовых кнопок на клавиатуре
     """
@@ -22,7 +28,7 @@ async def arrow(message: types.CallbackQuery):
 
     elif message.data == "🢁":
         # Верх
-        pass
+        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship,0,180))
 
 
 

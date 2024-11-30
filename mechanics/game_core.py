@@ -13,6 +13,8 @@ from models.world_objects.map import Map
 from models.world_objects.ship import Ship
 from models.world_objects.island import Island
 
+from core.map_list import maps
+
 from settings.global_settings import render_out_of_border_range
 
 
@@ -49,13 +51,13 @@ async def process_game():
     while game_active:
         await asyncio.sleep(short_step_delay)
         for map_ in maps:
-            process_map_iteration(map_, True)
+            process_map_iteration(maps[map_], True)
             short_step_num += 1
             if short_step_num >= short_steps_in_basic_step:
-                process_map_iteration(map_, False)
+                process_map_iteration(maps[map_], False)
                 short_step_num = 0
 
-            update_visual_map(map_)
+            update_visual_map(maps[map_])
 
 
 # Совершение запланированных действий
