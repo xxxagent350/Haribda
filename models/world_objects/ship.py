@@ -1,4 +1,5 @@
 from core.images_operator import get_image_path_from_ship_name
+from core.vector2 import Vector2
 from models.world_objects.game_object import GameObject
 from models.world_objects.Character import Character
 
@@ -25,6 +26,28 @@ class Ship(GameObject):
         self.onboard_team.append(Character(True, 1))
         self.onboard_team.append(Character())
         self.onboard_team.append(Character())
+
+
+    def move(self, direction):
+        self.rotation = direction
+        match direction:
+            case 0:  # Вверх
+                self.position.add(Vector2(0, 1))
+            case 45:
+                self.position.add(Vector2(-1, 1))
+            case -45:
+                self.position.add(Vector2(1, 1))
+            case 90:
+                self.position.add(Vector2(-1, 0))
+            case -90:
+                self.position.add(Vector2(1, 0))
+            case 135:
+                self.position.add(Vector2(-1, -1))
+            case -135:
+                self.position.add(Vector2(1, -1))
+            case 180:
+                self.position.add(Vector2(0, -1))
+
 
     def take_damage(self,damage):
         """

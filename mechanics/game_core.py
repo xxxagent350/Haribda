@@ -31,18 +31,20 @@ async def process_game():
     if step_delay % short_step_delay != 0:
         raise Exception("$ Невозможно запустить game_core.process_game, так как step_delay не кратен short_step_delay, а это условие обязательно")
     global maps
-    test_map = Map()
+
+    '''test_map = Map()
     test_user = User(5609117794)
     test_ship = Ship(owner=test_user, sprite_name=f"ship {2}", position=Vector2(2, 5), rotation=90, max_hp=100)
     test_ship2 = Ship(owner=test_user, sprite_name=f"ship {4}", position=Vector2(1, 2), rotation=180, max_hp=100)
     test_user.controlled_ship = test_ship
     test_user.current_map = test_map
-    test_action = Action(object_=test_ship, action_type=ActionType.move, value=0)
+    test_action = Action(object_=test_ship, action_type=ActionType.move, value=180)
     test_map.add_new_object(test_ship)
     test_map.add_new_object(test_ship2)
     test_map.add_new_delayed_action(test_action)
     maps = []
-    add_map(test_map)
+    add_map(test_map)'''
+
     short_step_num = 0
     short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
     while game_active:
@@ -70,10 +72,7 @@ def process_map_iteration(map_, short_update):
         if action_type == ActionType.move:
             map_.add_changed_square(object_)
             if type(object_) == Ship:
-                match delayed_action.value:
-                    case 0: # Вверх
-                        object_.position.add(Vector2(0, 1))
-                        object_.rotation = 0
+                object_.move(delayed_action.value)
 
         # Удаляем это действие из списка ожидаемых действий, так как только что выполнили его
         map_.delayed_actions.remove(delayed_action)
