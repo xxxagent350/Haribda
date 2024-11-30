@@ -1,5 +1,6 @@
 # Класс корабля, хранящий его статы
 from models.world_objects.game_object import GameObject
+from models.world_objects.Сharacter import Сharacter
 
 
 class Ship(GameObject):
@@ -21,6 +22,12 @@ class Ship(GameObject):
         self.max_hp = max_hp
         self.hp = max_hp
         self.field_of_view = field_of_view
+
+        self.onboard_team = []
+
+        self.onboard_team.append(Сharacter(True,1))
+        self.onboard_team.append(Сharacter())
+        self.onboard_team.append(Сharacter())
 
     def take_damage(self,damage):
         """
