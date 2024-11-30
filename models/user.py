@@ -1,4 +1,6 @@
 from DB_operators.BD_init import add_user, get_user, save_user
+from models.world_objects.ship import Ship
+from core.map_list import maps
 
 
 # Класс пользователя, хранящий его достижения, настройки, и т. д.
@@ -20,6 +22,7 @@ class User:
             self.name, self.artefacts, self.special_info, self.current_map  = user[1:]
         else:
             self.__new_user()
+            maps[0].add_new_object()
 
 
 
