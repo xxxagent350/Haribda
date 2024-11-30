@@ -6,7 +6,9 @@ from aiogram import types
 #Обработчик текста
 @dp.message()
 async def text_receiver(message: types.Message):
-    print(message.text)
-    text_event.trigger(message=message)
+    if message.chat.id > 0:
+        text_event.trigger(message=message)
+    else:
+        await message.bot.send_message(message.chat.id, "Недоступнов чатах")
 
 
