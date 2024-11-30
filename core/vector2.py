@@ -5,10 +5,12 @@ class Vector2:
         self.y = y
 
     def add(self, delta_pos):
+        """Прибавляет к этому вектору другой"""
         self.x += delta_pos.x
         self.y += delta_pos.y
 
     def summ(self, delta_pos):
+        """Возвращает сумму векторов"""
         return Vector2(self.x + delta_pos.x, self.y + delta_pos.y)
 
     def to_str(self):

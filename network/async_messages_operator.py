@@ -43,8 +43,18 @@ async def try_strong_edit_message_media(
     new_caption=None,
     new_photo=None,
     new_reply_markup=None,
-    max_edit_wait_time=1
+    max_edit_wait_time=0.5
 ) -> (bool, int):
+    """
+    Изменяет сообщение, при неудаче пытается удалить сообщение с message_id и выслать новое(в таком случае вернёт id нового сообщения, иначе - изменённого)
+    :param chat_id: id чата
+    :param message_id: id сообщения
+    :param new_caption: новая подпись
+    :param new_photo: новое фото
+    :param new_reply_markup: новый reply_markup
+    :param max_edit_wait_time: максимальное время ожидания изменения сообщения(при превышении перевышлется)
+    :return: удачно ли изменено, id изменённого сообщения(оно могло измениться)
+    """
     try:
         # Запускаем редактирование сообщения
         task = asyncio.create_task(

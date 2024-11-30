@@ -11,6 +11,7 @@ class User:
         self.special_info = []
         self.controlled_ship = None
         self.current_map = None
+        self.map_message_id = None
 
         #получение информации об игроке с таким ID из базы данных
         user, examination = get_user(user_id)
