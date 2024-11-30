@@ -31,7 +31,7 @@ async def process_game():
     if step_delay % short_step_delay != 0:
         raise Exception("$ Невозможно запустить game_core.process_game, так как step_delay не кратен short_step_delay, а это условие обязательно")
 
-    test_map = maps[0]
+    '''test_map = maps[0]
     test_user = User(5609117794)
     test_ship = Ship(owner=test_user, sprite_name=f"ship {2}", position=Vector2(2, 5), rotation=90, max_hp=100)
     test_ship2 = Ship(owner=None, sprite_name=f"ship {4}", position=Vector2(1, 2), rotation=180, max_hp=100)
@@ -40,7 +40,7 @@ async def process_game():
     test_action = Action(object_=test_ship, action_type=ActionType.move, value=180)
     test_map.add_new_object(test_ship)
     test_map.add_new_object(test_ship2)
-    test_map.add_new_delayed_action(test_action)
+    test_map.add_new_delayed_action(test_action)'''
 
     short_step_num = 0
     short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
