@@ -13,6 +13,8 @@ from models.world_objects.map import Map
 from models.world_objects.ship import Ship
 from models.world_objects.island import Island
 
+from settings.global_settings import render_out_of_border_range
+
 
 maps = []
 game_active = True
@@ -24,25 +26,23 @@ def add_map(map_):
     maps.append(map_)
 
 
+# Запускает автоматическое совершение запланированных действие с заданным интервалом
 async def process_game():
     if step_delay % short_step_delay != 0:
         raise Exception("$ Невозможно запустить game_core.process_game, так как step_delay не кратен short_step_delay, а это условие обязательно")
-
     global maps
-
     test_map = Map()
     test_user = User(5609117794)
-
-    test_ship = Ship(owner=test_user, sprite_name=f"ship {random.randint(1, 5)}", position=Vector2(2, 5), rotation=90, max_hp=100)
+    test_ship = Ship(owner=test_user, sprite_name=f"ship {2}", position=Vector2(2, 5), rotation=90, max_hp=100)
+    test_ship2 = Ship(owner=test_user, sprite_name=f"ship {4}", position=Vector2(1, 2), rotation=180, max_hp=100)
     test_user.controlled_ship = test_ship
     test_user.current_map = test_map
     test_action = Action(object_=test_ship, action_type=ActionType.move, value=0)
     test_map.add_new_object(test_ship)
-
+    test_map.add_new_object(test_ship2)
     test_map.add_new_delayed_action(test_action)
     maps = []
     add_map(test_map)
-
     short_step_num = 0
     short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
     while game_active:
@@ -57,6 +57,7 @@ async def process_game():
             update_visual_map(map_)
 
 
+# Совершение запланированных действий
 def process_map_iteration(map_, short_update):
     if not short_update:
         delayed_actions_list = map_.delayed_actions
@@ -66,13 +67,13 @@ def process_map_iteration(map_, short_update):
     for delayed_action in delayed_actions_list:
         object_ = delayed_action.object_
         action_type = delayed_action.action_type
-
         if action_type == ActionType.move:
             map_.add_changed_square(object_)
             if type(object_) == Ship:
                 match delayed_action.value:
                     case 0: # Вверх
                         object_.position.add(Vector2(0, 1))
+                        object_.rotation = 0
 
         # Удаляем это действие из списка ожидаемых действий, так как только что выполнили его
         map_.delayed_actions.remove(delayed_action)
@@ -81,13 +82,14 @@ def process_map_iteration(map_, short_update):
         map_.add_changed_square(object_)
 
 
+# Обновление визуальных карт у игроков, которым это необходимо
 def update_visual_map(map_):
     showed_changed_squares = dict() # Сюда добавляем квадраты на карте, которые уже были "погашены", то есть игроки их увидели
     users_to_update_map = dict()
     for object_ in map_.objects:
         if type(object_) == Ship and type(object_.owner) == User:
-            min_view_limits = object_.position.summ(Vector2(-object_.field_of_view, -object_.field_of_view))
-            max_view_limits = object_.position.summ(Vector2(object_.field_of_view, object_.field_of_view))
+            min_view_limits = object_.position.summ(Vector2(-object_.view_range - render_out_of_border_range, -object_.view_range - render_out_of_border_range))
+            max_view_limits = object_.position.summ(Vector2(object_.view_range + render_out_of_border_range, object_.view_range + render_out_of_border_range))
 
             for changed_square in map_.changed_squares:
                 # Проверка лежит ли изменённый квадрат в области видимости игрока
@@ -97,7 +99,7 @@ def update_visual_map(map_):
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():
-        asyncio.create_task(visualize_map_to_user(user))
+        asyncio.create_task(visualize_map_to_user(map_, user))
 
     # Удаляем "погашенные" квадраты из списка
     for showed_changed_square in showed_changed_squares.keys():

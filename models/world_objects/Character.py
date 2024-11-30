@@ -53,7 +53,7 @@ def generate_pirate_name():
     return f"{nickname} {base}"
 
 
-class Сharacter():
+class Character:
     def __init__(self, lid = False, bon = 0):
         """
 
@@ -75,7 +75,6 @@ class Сharacter():
         self.stamina = 1
 
         while point > 0:
-
             if random.randint(1,6) == 1:
                 self.control += 1
             elif random.randint(1,5) == 1:
@@ -86,6 +85,7 @@ class Сharacter():
                 self.survival += 1
             else:
                 self.stamina += 2
+            point -= 1
         self.__skill_gen()
 
 
