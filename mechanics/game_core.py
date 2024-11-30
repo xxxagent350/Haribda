@@ -16,14 +16,13 @@ from models.world_objects.island import Island
 from settings.global_settings import render_out_of_border_range
 
 
-maps = []
+
 game_active = True
 short_step_delay = 1 # Период обновления быстрых явлений(полёт снаряда, эффект взрыва и т. д.)
 step_delay = 5 # Стандартный период обновления(передвижения корабля, совершение погружения и т. д.); ДОЛЖЕН БЫТЬ КРАТНЫМ short_step_delay !!!
 
 
-def add_map(map_):
-    maps.append(map_)
+
 
 
 # Запускает автоматическое совершение запланированных действие с заданным интервалом
