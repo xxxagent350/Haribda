@@ -22,6 +22,7 @@ async def arrow(message: types.CallbackQuery):
 
     elif message.data == "🢁":
         # Верх
+        pass
 
 
 
