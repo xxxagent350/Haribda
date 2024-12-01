@@ -2,17 +2,30 @@ from aiogram import types
 from UI.inline_keyboard_buttons import button_controller
 from core.map_list import maps
 from core.action import Action,ActionType
-from core.user_list import user_list
-
+from core.user_list import users_dict
 
 
 async def arrow(message: types.CallbackQuery):
-    global maps
     """
-        Обработчик текстовых кнопок на клавиатуре
+    Обработчик стрелок передвижения
     """
-    print(message.data)
-    if message.data == "⬈":
+    if message.data == "↑":
+        # Верх
+        maps[0].add_new_delayed_action(Action(users_dict[message.message.chat.id].controlled_ship, ActionType.move, 0))
+
+    elif message.data == "←":
+        # Влево
+        maps[0].add_new_delayed_action(Action(users_dict[message.message.chat.id].controlled_ship, ActionType.move, 90))
+
+    elif message.data == "→":
+        # Вправо
+        maps[0].add_new_delayed_action(Action(users_dict[message.message.chat.id].controlled_ship, ActionType.move, -90))
+
+    elif message.data == "↓":
+        # Вниз
+        maps[0].add_new_delayed_action(Action(users_dict[message.message.chat.id].controlled_ship, ActionType.move, 180))
+
+    elif message.data == "⬈":
         # Правый верхний угол
         await message.message.bot.send_message(
             chat_id=message.message.chat.id,
@@ -26,36 +39,12 @@ async def arrow(message: types.CallbackQuery):
             text="Стрелочка направлена в левый верхний угол"
         )
 
-    elif message.data == "🢁":
-        # Верх
-        print(user_list)
-        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship,0,180))
-
-
-
-
-    elif message.data == "🢀":
-        # Влево
-        # Верх
-        print(user_list)
-        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, -90))
-
-    elif message.data == "🢂":
-        # Вправо
-        # Верх
-        print(user_list)
-        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, 90))
     elif message.data == "⬋":
         # Левый нижний угол
         await message.message.bot.send_message(
             chat_id=message.message.chat.id,
             text="Стрелочка направлена в левый нижний угол"
         )
-
-    elif message.data == "🢃":
-        # Верх
-        print(user_list)
-        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, 0))
 
     elif message.data == "⬊":
         # Правый нижний угол

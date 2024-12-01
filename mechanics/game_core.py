@@ -64,6 +64,7 @@ def process_map_iteration(map_, short_update):
     else:
         delayed_actions_list = map_.short_delayed_actions
 
+    delayed_actions_to_remove = []
     for delayed_action in delayed_actions_list:
         object_ = delayed_action.object_
         action_type = delayed_action.action_type
@@ -72,11 +73,19 @@ def process_map_iteration(map_, short_update):
             if type(object_) == Ship:
                 object_.move(delayed_action.value)
 
-        # Удаляем это действие из списка ожидаемых действий, так как только что выполнили его
-        map_.delayed_actions.remove(delayed_action)
+        # Добавляем действие в список на удаление
+        delayed_actions_to_remove.append(delayed_action)
 
         # Помечаем также квадрат на котором стоит объект сейчас на случай если он сдвинулся
         map_.add_changed_square(object_)
+
+    # Удаляем выполненные запланированные действия
+    if short_update:
+        for action_to_remove in delayed_actions_to_remove:
+            map_.short_delayed_actions = [action for action in map_.short_delayed_actions if not action == action_to_remove]
+    else:
+        for action_to_remove in delayed_actions_to_remove:
+            map_.delayed_actions = [action for action in map_.delayed_actions if not action == action_to_remove]
 
 
 # Обновление визуальных карт у игроков, которым это необходимо
