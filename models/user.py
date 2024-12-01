@@ -3,6 +3,9 @@ from models.world_objects.ship import Ship
 from core.vector2 import Vector2
 from core.map_list import maps
 
+from DB_operators.BD_init import get_all_user_ids
+
+
 
 
 # Класс пользователя, хранящий его достижения, настройки, и т. д.
@@ -25,9 +28,13 @@ class User:
             self.name, self.artefacts, self.special_info, self.current_map  = user[1:]
         else:
             self.__new_user()
-            self.controlled_ship = Ship(self,Vector2(0,0),0, "ship1",100, 4)
+            self.controlled_ship = Ship(self,Vector2(0,0),0, "ship 1",100, 4)
             maps[0].add_new_object(self.controlled_ship)
-            maps[0].add_new_object(Ship(self, Vector2(2, 2), 0, "ship3", 100, 4))
+            #maps[0].add_new_object(Ship(self, Vector2(2, 2), 0, "ship 3", 100, 4))
+        print(user_list)
+        user_list[user_id] = self
+        print(user_list)
+
 
 
 
@@ -36,3 +43,10 @@ class User:
 
     def save_user(self):
         save_user(self.id, self.name , self.artefacts, self.special_info, self.current_map)
+
+
+users_id  = get_all_user_ids()
+user_list = {}
+
+for i in users_id:
+    User(i)

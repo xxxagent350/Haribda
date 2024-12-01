@@ -28,6 +28,7 @@ async def arrow(message: types.CallbackQuery):
 
     elif message.data == "🢁":
         # Верх
+        print(user_list)
         maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship,0,180))
 
 
