@@ -36,18 +36,15 @@ async def arrow(message: types.CallbackQuery):
 
     elif message.data == "🢀":
         # Влево
-        await message.message.bot.send_message(
-            chat_id=message.message.chat.id,
-            text="Стрелочка направлена влево"
-        )
+        # Верх
+        print(user_list)
+        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, -90))
 
     elif message.data == "🢂":
         # Вправо
-        await message.message.bot.send_message(
-            chat_id=message.message.chat.id,
-            text="Стрелочка направлена вправо"
-        )
-
+        # Верх
+        print(user_list)
+        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, 90))
     elif message.data == "⬋":
         # Левый нижний угол
         await message.message.bot.send_message(
@@ -56,11 +53,9 @@ async def arrow(message: types.CallbackQuery):
         )
 
     elif message.data == "🢃":
-        # Вниз
-        await message.message.bot.send_message(
-            chat_id=message.message.chat.id,
-            text="Стрелочка направлена вниз"
-        )
+        # Верх
+        print(user_list)
+        maps[0].add_new_delayed_action(Action(user_list[message.message.chat.id].controlled_ship, 0, 0))
 
     elif message.data == "⬊":
         # Правый нижний угол

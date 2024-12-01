@@ -30,10 +30,10 @@ class User:
             self.__new_user()
             self.controlled_ship = Ship(self,Vector2(0,0),0, "ship 1",100, 4)
             maps[0].add_new_object(self.controlled_ship)
-            #maps[0].add_new_object(Ship(self, Vector2(2, 2), 0, "ship 3", 100, 4))
-        print(user_list)
+            print(maps[0].objects)
+            maps[0].add_new_object(Ship(self, Vector2(2, 2), 0, "ship 3", 100, 4))
         user_list[user_id] = self
-        print(user_list)
+
 
 
 
