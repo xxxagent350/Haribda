@@ -61,7 +61,7 @@ def get_user(user_id):
         print(f"Ошибка при получении пользователей: {e}")
         return None ,False
 
-def save_user(user_id, name=None, artefact=None, special_info=None):
+def save_user(user_id, name=None, artefact=None, special_info=None, current_map = 0):
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
@@ -79,7 +79,8 @@ def save_user(user_id, name=None, artefact=None, special_info=None):
                 cursor.execute("UPDATE example_table SET artefact = ? WHERE id = ?", (List_in_Str(artefact), user_id))
             if special_info is not None:
                 cursor.execute("UPDATE example_table SET special_info = ? WHERE id = ?", (List_in_Str(special_info), user_id))
-
+            cursor.execute("UPDATE example_table SET current_map = ? WHERE id = ?",
+                           (map, user_id))
             print(f"Пользователь с ID {user_id} успешно обновлен!")
             return True
 

@@ -4,6 +4,7 @@ import asyncio
 import signal
 import time
 import traceback
+from DB_operators.maps_saver import save_maps_to_file
 
 
 
@@ -22,6 +23,8 @@ from DB_operators.BD_init import init_db
 from variables.bot import dp,bot
 from mechanics.game_core import process_game
 
+from core.map_list import maps
+
 async def main():
     asyncio.create_task(process_game())
     await bot.delete_webhook(drop_pending_updates=True)
@@ -30,6 +33,7 @@ async def main():
 
 
 async def on_shutdown(dp):
+    save_maps_to_file(maps, "maps.json")
     print("Программа завершается... Ожидаю завершения всех задач.")
     await bot.close()
 
