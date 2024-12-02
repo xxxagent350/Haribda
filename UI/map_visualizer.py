@@ -15,7 +15,6 @@ from variables.bot import bot
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
 
-
 def create_background(width, height, color=(252, 141, 56)):  # RGB вместо HEX
     """Создание фона."""
     return np.full((height, width, 3), color, dtype=np.uint8)

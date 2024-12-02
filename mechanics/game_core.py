@@ -1,5 +1,7 @@
 import asyncio
 import random
+import time
+
 #from signal import pthread_sigmask
 
 from aiogram.filters import and_f
@@ -17,6 +19,7 @@ from models.world_objects.island import Island
 
 from settings.global_settings import render_out_of_border_range
 
+from DB_operators.maps_saver import save_maps_to_file
 
 
 game_active = True
@@ -102,6 +105,11 @@ def update_visual_map(map_):
                 if min_view_limits.x <= changed_square.x <= max_view_limits.x and min_view_limits.y <= changed_square.y <= max_view_limits.y:
                     showed_changed_squares[Vector2(changed_square.x, changed_square.y)] = True
                     users_to_update_map[object_.owner] = True
+
+    if len(users_to_update_map.keys()) != 0:
+        t = time.time()
+        save_maps_to_file(maps, "maps.json")
+        print(f"Время сохраниения карт : {time.time()-t}")
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():
