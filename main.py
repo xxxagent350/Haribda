@@ -5,8 +5,7 @@ import signal
 import time
 import traceback
 from DB_operators.maps_saver import save_maps_to_file
-
-
+from core.map_list import maps
 
 # Инициализируем события
 from variables import event_manager
@@ -24,6 +23,7 @@ from variables.bot import dp,bot
 from mechanics.game_core import process_game
 
 from core import map_list_operator
+
 
 async def main():
     asyncio.create_task(process_game())

@@ -23,7 +23,6 @@ async def map_button_reaction(message: types.Message):
             player_ship.register_owner(user_)
             maps[0].add_new_object(player_ship)
 
-
             '''caption = "Это карта"
 
             photo = types.FSInputFile("image.jpg")

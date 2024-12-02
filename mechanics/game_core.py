@@ -1,21 +1,16 @@
 import asyncio
-import random
 import time
 
 #from signal import pthread_sigmask
 
-from aiogram.filters import and_f
-
 from core.map_list import maps
 from core.vector2 import Vector2
-from core.action import ActionType, Action
-from UI.map_visualizer import visualize_map_to_user
+from core.action import ActionType
+from UI.map_visualizer import update_map_message_of_user
 
 # Импорт объектов карты
 from models.user import User
-from models.world_objects.map import Map
 from models.world_objects.ship import Ship
-from models.world_objects.island import Island
 
 from settings.global_settings import render_out_of_border_range
 
@@ -106,15 +101,15 @@ def update_visual_map(map_):
                     showed_changed_squares[Vector2(changed_square.x, changed_square.y)] = True
                     users_to_update_map[object_.owner] = True
 
-    #Сохраняет карту
+    # Сохраняет карту
     if len(users_to_update_map.keys()) != 0:
         t = time.time()
         save_maps_to_file(maps, "maps.json")
-        print(f"Время сохраниения карт : {time.time()-t}")
+        print(f"Время сохранения карт : {time.time()-t}")
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():
-        asyncio.create_task(visualize_map_to_user(map_, user))
+        asyncio.create_task(update_map_message_of_user(user))
 
     # Удаляем "погашенные" квадраты из списка
     for showed_changed_square in showed_changed_squares.keys():

@@ -51,9 +51,11 @@ def get_user(user_id):
 
             user = [x for x in user]
             if user != None:
-                print("f : ",user)
+                print("load user : ",user)
                 user[2] = Str_in_List(user[2])
                 user[3] = Str_in_List(user[3])
+                if user[3] is None:
+                    user[3] = 0
                 return user, True
             else:
                 return None, False

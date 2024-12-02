@@ -1,6 +1,6 @@
 import json
 import copy
-from models.world_objects.map import Map
+from models.map import Map
 from models.world_objects.ship import Ship
 
 
@@ -45,9 +45,10 @@ def decode_object(dct):
 
 
 # Функция для сохранения карт в файл
-def save_maps_to_file(maps, file_path):
+def save_maps_to_file(maps_, file_path):
     with open(file_path, "w", encoding="utf-8") as file:
-        json.dump(maps, file, cls=MapEncoder)
+        #json.dump(maps_, file, cls=MapEncoder)
+        pass
 
 
 # Функция для загрузки карт из файла

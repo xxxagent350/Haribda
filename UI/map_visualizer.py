@@ -6,11 +6,13 @@ from aiogram import types
 import random
 import asyncio
 
-from UI.inline_keyboard_buttons import get_ship_control_inline_keyboard
+from UI import inline_keyboard_buttons
 from core import images_operator
+from core.map_list import maps
 from core.user_list import users_id
 from core.vector2 import Vector2
 from models.world_objects.ship import Ship
+from network.async_messages_operator import try_delete_message
 from variables.bot import bot
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
@@ -190,9 +192,12 @@ def add_grid(
     cv2.addWeighted(text_layer, text_alpha, base_image, 1 - text_alpha, 0, base_image)
 
 
-async def visualize_map_to_user(map_, user):
-    """Генерация карты и отправка пользователю."""
+def get_user_map_image(user):
     start_time = time.perf_counter()
+    if user.current_map is not None:
+        map_ = maps[user.current_map]
+    else:
+        raise Exception(f'Невозможно сгенерировать изображение карты пользователю {user.name}, так как user.current_map == None')
 
     # Задаём размер карты
     resolution = 1024
@@ -211,11 +216,44 @@ async def visualize_map_to_user(map_, user):
     _, buffer = cv2.imencode('.png', base_image)
     image_bytes = buffer.tobytes()
 
-    # Отправляем изображение пользователю
-    asyncio.create_task(send_new_map_image(user, types.BufferedInputFile(image_bytes, filename="map.png")))
-    print(f'Время генерации: {(time.perf_counter() - start_time) * 1000:.1f} мс')
+    print(f'Время генерации картинки карты: {(time.perf_counter() - start_time) * 1000:.1f} мс')
+    return types.BufferedInputFile(image_bytes, filename="map.png")
 
 
-async def send_new_map_image(user, map_image):
-    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption="Это карта", new_reply_markup=get_ship_control_inline_keyboard(user))
-    user.map_message_id = new_message_id
+async def update_map_message_of_user(user, dont_update_map_image = False, iteration_num = 0):
+    """
+    Генерация карты и отправка пользователю
+    :param user: Пользователь которому обновить сообщение с картой
+    :param dont_update_map_image: При True не обновляет изображение карты(полезно если нужно обновить только кнопки или текст)
+    :param iteration_num: Номер попытки, нужен для предотвращения бесконечного цикла
+    """
+    if iteration_num > 5:
+        return
+
+    # Проверяем заданы ли у юзера корабль и карта
+    if user.controlled_ship is None:
+        print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан controlled_ship")
+        return
+    if user.current_map is None:
+        print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан current_map")
+        return
+
+    if not dont_update_map_image:
+        map_image = get_user_map_image(user)
+    else:
+        map_image = None
+
+    # Проверяем есть ли у игрока ожидаемые действия и если да то отображаем кнопку отмены
+    if not maps[user.current_map].check_if_object_has_delayed_actions(user.controlled_ship):
+        new_reply_markup=inline_keyboard_buttons.ship_control_buttons
+    else:
+        new_reply_markup=inline_keyboard_buttons.cancel_button
+
+    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption="Это карта", new_reply_markup=new_reply_markup)
+    if result:
+        user.map_message_id = new_message_id
+    else:
+        await try_delete_message(user.id, new_message_id)
+        user.map_message_id = None
+        asyncio.create_task(update_map_message_of_user(user, iteration_num=iteration_num + 1))
+        print(f"Неудача изменения сообщения с картой, генерирую и высылаю заново({iteration_num})...")

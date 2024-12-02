@@ -24,6 +24,8 @@ class User:
         
         if examination:
             self.name, self.artefacts, self.special_info, self.current_map  = user[1:]
+            if self.current_map is None:
+                self.current_map = 0
         else:
             self.__new_user()
             #self.controlled_ship = Ship(self,Vector2(0,0),0, "ship 1",100, 4)

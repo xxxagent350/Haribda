@@ -4,10 +4,11 @@ from core.action import Action,ActionType
 from core.user_list import users_dict
 
 
-async def arrow(message: types.CallbackQuery):
+async def arrows_reaction(message: types.CallbackQuery):
     """
     Обработчик стрелок передвижения
     """
+
     if message.data == "↑":
         # Верх
         maps[0].add_new_delayed_action(Action(users_dict[message.message.chat.id].controlled_ship, ActionType.move, 0))

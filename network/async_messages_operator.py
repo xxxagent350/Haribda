@@ -57,14 +57,24 @@ async def try_strong_edit_message_media(
     """
     try:
         # Запускаем редактирование сообщения
-        task = asyncio.create_task(
-            bot.edit_message_media(
-                chat_id=chat_id,
-                message_id=message_id,
-                media=InputMediaPhoto(media=new_photo, caption=new_caption),
-                reply_markup=new_reply_markup
+        if new_photo is not None:
+            task = asyncio.create_task(
+                bot.edit_message_media(
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    media=InputMediaPhoto(media=new_photo, caption=new_caption),
+                    reply_markup=new_reply_markup
+                )
             )
-        )
+        else:
+            task = asyncio.create_task(
+                bot.edit_message_caption(
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    caption=new_caption,
+                    reply_markup=new_reply_markup
+                )
+            )
 
         # Ждем завершения редактирования в пределах max_edit_wait_time
         done, pending = await asyncio.wait([task], timeout=max_edit_wait_time)
@@ -89,17 +99,21 @@ async def try_strong_edit_message_media(
             asyncio.create_task(try_delete_message(chat_id=chat_id, message_id=message_id))
         except:
             pass
-        
+
         # Отправляем новое сообщение
-        new_message: Message = await bot.send_photo(
-            chat_id=chat_id,
-            photo=new_photo,
-            caption=new_caption,
-            reply_markup=new_reply_markup
-        )
+        if new_photo is not None:
+            new_message: Message = await bot.send_photo(
+                chat_id=chat_id,
+                photo=new_photo,
+                caption=new_caption,
+                reply_markup=new_reply_markup
+            )
+        else:
+            return False, None
+
         print("Перевыслано успешно")
         return True, new_message.message_id
 
-    except NotImplementedError as exception:
+    except Exception as exception:
         print(f"$ Warning - message's {message_id} in chat {chat_id} could not be edited or replaced: {exception}")
         return False, None

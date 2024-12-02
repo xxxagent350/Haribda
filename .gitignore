@@ -76,3 +76,4 @@ Thumbs.db.meta
 settings/not_synchronized.py
 error_log.txt
 *.pyc
+maps.json

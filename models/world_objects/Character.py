@@ -1,5 +1,5 @@
 import random
-from models.world_objects.skill import skill
+from models.skill import skill
 
 
 # Части имени
