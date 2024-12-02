@@ -1,5 +1,10 @@
+import asyncio
 import copy
+from asyncio import create_task
 
+from UI.map_visualizer import visualize_map_to_user
+from core.map_list import maps
+from models.user import User
 from models.world_objects.ship import Ship
 
 
@@ -22,10 +27,10 @@ class Map:
         :param override: Да = перезапишет запланированное действие этого объекта если уже есть другое, нет = добавит ещё одно в любом случае
         :return:
         """
-
         # Обновляем сообщение карты, чтобы добавить кнопку Отмена
-        if not short_action and type(new_action.object_) == Ship:
-            pass
+        if not short_action and type(new_action.object_) == Ship and type(new_action.object_.owner) == User:
+
+            asyncio.create_task(visualize_map_to_user(maps[new_action.object_.owner.current_map], new_action.object_.owner))
 
         if not short_action:
             actions_list = self.delayed_actions

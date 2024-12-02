@@ -23,7 +23,7 @@ from DB_operators.BD_init import init_db
 from variables.bot import dp,bot
 from mechanics.game_core import process_game
 
-from core.map_list import maps
+from core import map_list_operator
 
 async def main():
     asyncio.create_task(process_game())

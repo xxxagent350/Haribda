@@ -34,7 +34,6 @@ class Ship(GameObject):
             owner.controlled_ship = self
 
     def move(self, direction):
-        print(f'{self.image_path}: {direction}')
         self.rotation = direction
         match direction:
             case 0:  # Вверх
