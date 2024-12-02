@@ -106,6 +106,7 @@ def update_visual_map(map_):
                     showed_changed_squares[Vector2(changed_square.x, changed_square.y)] = True
                     users_to_update_map[object_.owner] = True
 
+    #Сохраняет карту
     if len(users_to_update_map.keys()) != 0:
         t = time.time()
         save_maps_to_file(maps, "maps.json")
