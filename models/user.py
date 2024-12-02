@@ -1,10 +1,6 @@
 from DB_operators.BD_init import add_user, get_user, save_user
-from core.vector2 import Vector2
-from core.map_list import maps
 
 from DB_operators.BD_init import get_all_user_ids
-
-
 
 
 # Класс пользователя, хранящий его достижения, настройки, и т. д.

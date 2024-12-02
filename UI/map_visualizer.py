@@ -6,7 +6,7 @@ from aiogram import types
 import random
 import asyncio
 
-from UI.inline_keyboard_buttons import button_controller
+from UI.inline_keyboard_buttons import get_ship_control_inline_keyboard
 from core import images_operator
 from core.user_list import users_id
 from core.vector2 import Vector2
@@ -218,5 +218,5 @@ async def visualize_map_to_user(map_, user):
 
 
 async def send_new_map_image(user, map_image):
-    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption="Это карта", new_reply_markup=button_controller)
+    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption="Это карта", new_reply_markup=get_ship_control_inline_keyboard(user))
     user.map_message_id = new_message_id

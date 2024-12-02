@@ -1,5 +1,7 @@
 import copy
 
+from models.world_objects.ship import Ship
+
 
 class Map:
     def __init__(self):
@@ -20,6 +22,10 @@ class Map:
         :param override: Да = перезапишет запланированное действие этого объекта если уже есть другое, нет = добавит ещё одно в любом случае
         :return:
         """
+
+        # Обновляем сообщение карты, чтобы добавить кнопку Отмена
+        if not short_action and type(new_action.object_) == Ship:
+            pass
 
         if not short_action:
             actions_list = self.delayed_actions

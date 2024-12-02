@@ -1,7 +1,7 @@
 from random import randint
 
 from aiogram import types
-from UI.inline_keyboard_buttons import button_controller
+from UI.inline_keyboard_buttons import ship_control_buttons
 from core.vector2 import Vector2
 from core.map_list import maps
 from models import user
