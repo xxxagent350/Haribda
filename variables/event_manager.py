@@ -1,8 +1,8 @@
 from models.event import Event
 
-from UI.text_reactions.start_reaction import command_start
-from UI.text_reactions.map_reaction import map_button_reaction
-from UI.call_reactions.arrows_reaction import arrow
+from core.text_reactions.start_reaction import command_start
+from core.text_reactions.map_reaction import map_button_reaction
+from core.call_reactions.arrows_reaction import arrow
 
 text_event = Event()
 call_event = Event()
