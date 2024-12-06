@@ -1,7 +1,10 @@
+import asyncio
 from random import randint
 
 from aiogram import types
 from UI.inline_keyboard_buttons import ship_control_buttons
+from UI.map_visualizer import update_map_message_of_user
+from network import async_messages_operator
 from core.vector2 import Vector2
 from core.map_list import maps
 from models import user
@@ -23,15 +26,7 @@ async def map_button_reaction(message: types.Message):
             player_ship.register_owner(user_)
             maps[0].add_new_object(player_ship)
 
-            '''caption = "Это карта"
-
-            photo = types.FSInputFile("image.jpg")
-
-            # Отправляем фото с текстом и кнопками
-            await message.bot.send_photo(
-                        chat_id=message.chat.id,
-                        photo=photo,
-                        caption=caption,
-                        reply_markup = button_controller
-                    )'''
-
+        # Удаляем старую карту если она была и отсылаем новую
+        asyncio.create_task(async_messages_operator.try_delete_message(user_.id, user_.map_message_id))
+        user_.map_message_id = None
+        asyncio.create_task(update_map_message_of_user(user_))
