@@ -33,6 +33,7 @@ class Ship(GameObject):
         if type(owner) == User:
             owner.controlled_ship = self
 
+
     def move(self, direction):
         self.rotation = direction
         match direction:

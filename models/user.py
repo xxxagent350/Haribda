@@ -23,7 +23,8 @@ class User:
 
         
         if examination:
-            self.name, self.artefacts, self.special_info, self.current_map  = user[1:]
+            self.name, self.artefacts, self.special_info, self.controlled_ship, self.current_map  = user[1:]
+
             if self.current_map is None:
                 self.current_map = 0
         else:
@@ -41,7 +42,7 @@ class User:
         add_user(self.id,name)
 
     def save_user(self):
-        save_user(self.id, self.name , self.artefacts, self.special_info, self.current_map)
+        save_user(self.id, self.name , self.artefacts, self.special_info, self.current_map, self.controlled_ship != None)
 
 
 users_id  = get_all_user_ids()

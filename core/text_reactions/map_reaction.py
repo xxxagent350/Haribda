@@ -21,10 +21,18 @@ async def map_button_reaction(message: types.Message):
         user_ = user.users_dict[message.chat.id]
 
         # Проверка есть ли у игрока корабль
-        if user_.controlled_ship is None:
+        if user_.controlled_ship == 0:
             player_ship = Ship(position=Vector2(randint(-2, 2), randint(-2, 2)), rotation=0, sprite_name=f'ship {randint(1, 5)}')
             player_ship.register_owner(user_)
-            maps[0].add_new_object(player_ship)
+            maps[user_.current_map].add_new_object(player_ship)
+        else:
+            for i in maps:
+                for object_ in i.objects:
+                    if type(object_) == Ship:
+                        if object_.owner.id == user_.id:
+                            user_.controlled_ship  =  object_
+                            break
+
 
         # Удаляем старую карту если она была и отсылаем новую
         asyncio.create_task(async_messages_operator.try_delete_message(user_.id, user_.map_message_id))
