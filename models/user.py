@@ -42,7 +42,8 @@ class User:
         add_user(self.id,name)
 
     def save_user(self):
-        save_user(self.id, self.name , self.artefacts, self.special_info, self.current_map, self.controlled_ship != None)
+        save_user(self.id, self.name, self.artefacts, self.special_info, self.current_map, checking_ship =
+                    self.controlled_ship is None)
 
 
 users_id  = get_all_user_ids()

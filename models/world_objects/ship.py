@@ -31,7 +31,12 @@ class Ship(GameObject):
         """Регистрирует владельца корабля"""
         self.owner = owner
         if type(owner) == User:
+            breakpoint()
             owner.controlled_ship = self
+        else:
+            print("\n"*10)
+            print("$ Warning : The owner of the ship is not User (ship.py)")
+            print("\n" * 3)
 
 
     def move(self, direction):

@@ -21,13 +21,13 @@ async def map_button_reaction(message: types.Message):
         user_ = user.users_dict[message.chat.id]
 
         # Проверка есть ли у игрока корабль
-        if user_.controlled_ship == 0:
+        if user_.controlled_ship is None:
             player_ship = Ship(position=Vector2(randint(-2, 2), randint(-2, 2)), rotation=0, sprite_name=f'ship {randint(1, 5)}')
             player_ship.register_owner(user_)
             maps[user_.current_map].add_new_object(player_ship)
         else:
-            for i in maps:
-                for object_ in i.objects:
+            for i in maps.keys():
+                for object_ in maps[i].objects:
                     if type(object_) == Ship:
                         if object_.owner.id == user_.id:
                             user_.controlled_ship  =  object_
