@@ -1,6 +1,6 @@
 from variables.event_manager import call_event
 from variables.bot import  dp
-from core.user_list import users_dict
+from variables.users_dict import users_dict
 from models.user import User
 
 #Обработчик текста

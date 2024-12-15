@@ -2,14 +2,13 @@ import asyncio
 from random import randint
 
 from aiogram import types
-from UI.inline_keyboard_buttons import ship_control_buttons
 from UI.map_visualizer import update_map_message_of_user
 from network import async_messages_operator
 from core.vector2 import Vector2
-from core.map_list import maps
+from variables.maps_dict import maps
 from models import user
 from models.world_objects.ship import Ship
-import random
+
 
 async def map_button_reaction(message: types.Message):
     """

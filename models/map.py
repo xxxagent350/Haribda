@@ -1,12 +1,9 @@
 import asyncio
 import copy
-from asyncio import create_task
 
 from UI import map_visualizer
-from core.map_list import maps
 from models.user import User
 from models.world_objects.ship import Ship
-from network import async_messages_operator
 
 
 class Map:

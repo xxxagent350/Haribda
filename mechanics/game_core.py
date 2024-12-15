@@ -3,7 +3,7 @@ import time
 
 #from signal import pthread_sigmask
 
-from core.map_list import maps
+from variables.maps_dict import maps
 from core.vector2 import Vector2
 from core.action import ActionType
 from UI.map_visualizer import update_map_message_of_user
@@ -14,15 +14,11 @@ from models.world_objects.ship import Ship
 
 from settings.global_settings import render_out_of_border_range
 
-from DB_operators.maps_saver import save_maps_to_file
-
+from data_operators.maps_operator import save_maps
 
 game_active = True
 short_step_delay = 1 # Период обновления быстрых явлений(полёт снаряда, эффект взрыва и т. д.)
 step_delay = 5 # Стандартный период обновления(передвижения корабля, совершение погружения и т. д.); ДОЛЖЕН БЫТЬ КРАТНЫМ short_step_delay !!!
-
-
-
 
 
 # Запускает автоматическое совершение запланированных действие с заданным интервалом
@@ -104,7 +100,7 @@ def update_visual_map(map_):
     # Сохраняет карту
     if len(users_to_update_map.keys()) != 0:
         t = time.time()
-        save_maps_to_file(maps, "maps.json")
+        save_maps()
         print(f"Время сохранения карт : {time.time()-t}")
 
     # Отсылаем карты заново кому надо

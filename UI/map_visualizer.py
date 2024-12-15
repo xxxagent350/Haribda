@@ -1,19 +1,15 @@
-import math
 import time
 import cv2
 import numpy as np
 from aiogram import types
-import random
 import asyncio
 
 from UI import inline_keyboard_buttons
 from core import images_operator
-from core.map_list import maps
-from core.user_list import users_id
+from variables.maps_dict import maps
 from core.vector2 import Vector2
 from models.world_objects.ship import Ship
 from network.async_messages_operator import try_delete_message
-from variables.bot import bot
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
 
@@ -195,13 +191,14 @@ def add_grid(
 def get_user_map_image(user):
     start_time = time.perf_counter()
     if user.current_map is not None:
+        print(f'maps: {maps}')
         map_ = maps[user.current_map]
     else:
         raise Exception(f'Невозможно сгенерировать изображение карты пользователю {user.name}, так как user.current_map == None')
 
     # Задаём размер карты
     resolution = 1024
-    cells_num = (user.controlled_ship.view_range * 2) + 1  # Количество клеток на карте
+    cells_num = (user.controlled_ship.view_range * 2) + 1  # Количество клеток на картинке карты
 
     # Создаем фон
     base_image = create_background(resolution, resolution)

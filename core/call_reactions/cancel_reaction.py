@@ -2,8 +2,8 @@ import asyncio
 
 from aiogram import types
 
-from core.map_list import maps
-from core.user_list import users_dict
+from variables.maps_dict import maps
+from variables.users_dict import users_dict
 from UI import map_visualizer
 
 

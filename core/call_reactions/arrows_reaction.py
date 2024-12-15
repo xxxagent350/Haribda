@@ -1,7 +1,7 @@
 from aiogram import types
-from core.map_list import maps
+from variables.maps_dict import maps
 from core.action import Action,ActionType
-from core.user_list import users_dict
+from variables.users_dict import users_dict
 
 
 async def arrows_reaction(message: types.CallbackQuery):

@@ -2,9 +2,8 @@ import asyncio
 
 from variables.event_manager import text_event
 from variables.bot import  dp
-from aiogram.filters import Command
 from aiogram import types
-from core.user_list import users_dict
+from variables.users_dict import users_dict
 from models.user import User
 from network import async_messages_operator
 
