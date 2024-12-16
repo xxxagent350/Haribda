@@ -2,7 +2,7 @@ from core.images_operator import get_image_path_from_ship_name
 from core.vector2 import Vector2
 from models.user import User
 from models.world_objects.game_object import GameObject
-from models.world_objects.Character import Character
+from models.world_objects.character import Character
 
 
 # Класс корабля, хранящий его статы

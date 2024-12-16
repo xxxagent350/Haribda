@@ -7,12 +7,11 @@ class User:
         self.id = user_id
         self.name = ' ___ '
         self.artefacts = []
-        self.special_info = []
+        self.special_info = ''
         self.current_map = 0
         self.map_message_id = None
 
         self.controlled_ship = None;  """Задавать с помощью ship.register_owner(owner)"""
-        self.controlled_ship_id = None # Уникальный идентификатор корабля(нужен при загрузке данных из файла)
 
 
         '''

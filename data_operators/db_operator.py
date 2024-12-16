@@ -2,10 +2,13 @@ import sqlite3
 import os
 from shutil import copyfile
 from a_library.custom_translator import List_in_Str, Str_in_List
+from models.world_objects.ship import Ship
+from variables.maps_dict import maps
 from variables.users_dict import users_dict
 from models.user import User
 from settings import global_settings
 from data_operators.db_column import DBColumn
+from core.nick_generator import get_random_name
 
 db_filename = 'users.db'
 db_path = os.path.join(global_settings.data_path, db_filename)
@@ -20,9 +23,18 @@ REQUIRED_COLUMNS = [
     DBColumn("current_map_id", "INTEGER", "0")
 ]
 
-
 def init_db():
     try:
+        # Создаём базу данных, если её нет
+        if not os.path.exists(db_path):
+            print("База данных не найдена. Создаётся новая база.")
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(build_create_table_query("users_data", REQUIRED_COLUMNS))
+            print("Новая база данных создана.")
+            return
+
+        # Подключение к существующей базе
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
 
@@ -33,21 +45,17 @@ def init_db():
                 for row in cursor.fetchall()
             ]
 
+            # Если структура базы данных не совпадает, адаптируем её
             if not columns_match(existing_columns, REQUIRED_COLUMNS):
-                print("Архитектура базы данных отличается от необходимой")
+                print("Архитектура базы данных отличается. Адаптируем...")
                 backup_path = f"{db_path}.backup"
                 copyfile(db_path, backup_path)
                 print(f"Резервная копия базы данных создана: {backup_path}")
+                adapt_database(cursor, existing_columns, REQUIRED_COLUMNS)
 
-                user_input = input("Хотите адаптировать базу данных к новой архитектуре? (yes/no): ").strip().lower()
-                if user_input == "yes":
-                    adapt_database(cursor, existing_columns, REQUIRED_COLUMNS)
-                else:
-                    print("Адаптация базы данных отменена")
-
-            # Создаем таблицу, если её нет
+            # Создаём таблицу, если её нет
             cursor.execute(build_create_table_query("users_data", REQUIRED_COLUMNS))
-            print("База данных пользователей инициализирована")
+            print("База данных успешно инициализирована")
     except Exception as e:
         print(f"Ошибка при инициализации базы данных: {e}")
 
@@ -80,8 +88,8 @@ def adapt_database(cursor, existing_columns, required_columns):
         # Удаляем старую таблицу и переименовываем временную
         cursor.execute("DROP TABLE users_data")
         cursor.execute(f"ALTER TABLE {temp_table} RENAME TO users_data")
-        print("База данных успешно адаптирована")
-    except NotImplemented as e:
+        print("База данных успешно адаптирована.")
+    except Exception as e:
         print(f"Ошибка при адаптации базы данных: {e}")
 
 def build_create_table_query(table_name, columns):
@@ -96,7 +104,17 @@ def build_create_table_query(table_name, columns):
     column_definitions_str = ", ".join(column_definitions)
     return f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions_str})"
 
-def add_user(user_id, name, artefact=None, special_info=None, current_map=None):
+def add_user(user_id, name=None, artefact=None, special_info=None, current_map_id=0):
+    """
+    :param user_id: ID пользователя
+    :param name: Имя пользователя. При None генерируется автоматически
+    :param artefact: Артефакты
+    :param special_info: Дополнительная информация
+    :param current_map_id: Номер карты, на которой сейчас находится корабль игрока
+    :return:
+    """
+    if name is None:
+        name = get_random_name()
     artefact = artefact or []
     special_info = special_info or []
     try:
@@ -104,10 +122,10 @@ def add_user(user_id, name, artefact=None, special_info=None, current_map=None):
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO users_data (id, name, artefact, special_info, current_map_id)
+                INSERT INTO users_data (id, name, artefacts, special_info, current_map_id)
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                (user_id, name, List_in_Str(artefact), List_in_Str(special_info), current_map)
+                (user_id, name, List_in_Str(artefact), List_in_Str(special_info), current_map_id)
             )
             print(f"Пользователь '{name}' успешно добавлен!")
     except Exception as e:
@@ -119,13 +137,26 @@ def try_get_user(user_id):
             cursor = conn.cursor()
             loaded_user_data = cursor.execute("SELECT * FROM users_data WHERE id = ?", (user_id,)).fetchone()
             if loaded_user_data:
-                for i in range(len(loaded_user_data)):
-                    print(f'{i}: {loaded_user_data[i]}')
-                loaded_user = User(loaded_user_data[1])
-                loaded_user_data = list(loaded_user_data)
-                loaded_user_data[2] = Str_in_List(loaded_user_data[2]) if loaded_user_data[2] else []
-                loaded_user_data[3] = Str_in_List(loaded_user_data[3]) if loaded_user_data[3] else []
-                return loaded_user_data
+                loaded_user = User(loaded_user_data[0])
+                loaded_user.name = loaded_user_data[1]
+                loaded_user.artefacts = Str_in_List(loaded_user_data[2])
+                loaded_user.special_info = loaded_user_data[3]
+
+                # Поиск корабля игрока на картах
+                controlled_ship_id = loaded_user_data[4]
+                searching_complete = False
+                for map_ in maps.values():
+                    for object_ in map_.objects:
+                        if type(object_) == Ship and object_.index == controlled_ship_id:
+                            loaded_user.controlled_ship = object_
+                            searching_complete = True
+                            break
+                    if searching_complete:
+                        break
+
+                if loaded_user_data[5] in maps:
+                    loaded_user.current_map = maps[loaded_user_data[5]]
+                return loaded_user
             else:
                 return None
     except Exception as e:
@@ -178,7 +209,3 @@ def get_all_users_dict():
 def load_all_users():
     all_users_dict = get_all_users_dict()
     users_dict.update(all_users_dict)
-
-    for user in all_users_dict.values():
-        #if user.
-        pass

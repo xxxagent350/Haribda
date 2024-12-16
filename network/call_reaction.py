@@ -1,14 +1,20 @@
 from variables.event_manager import call_event
 from variables.bot import  dp
-from variables.users_dict import users_dict
 from models.user import User
+from data_operators import db_operator
+from variables.users_dict import users_dict
 
 #Обработчик текста
 @dp.callback_query()
 async def text_receiver(message):
-    if message.message.chat.id > 0:
-        if not message.message.chat.id in users_dict.keys():
-            User(message.message.chat.id)
+    chat_id = message.message.chat.id
+    if chat_id > 0:
+        # Регаем игрока если ещё не зареган
+        if not chat_id in users_dict:
+            db_operator.add_user(chat_id)
+
+        if not chat_id in users_dict.keys():
+            User(chat_id)
         call_event.trigger(message = message)
     else:
-        await message.message.bot.send_message(message.message.chat.id, "Недоступно в чатах")
+        await message.message.bot.send_message(chat_id, "Недоступно в чатах")

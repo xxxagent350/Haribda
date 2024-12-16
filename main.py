@@ -28,7 +28,7 @@ async def main():
 
     # Инициализируем базу данных и загружаем данные пользователей
     db_operator.init_db()
-    db_operator.try_get_user(-1)
+    db_operator.load_all_users()
 
     asyncio.create_task(process_game())
     await bot.delete_webhook(drop_pending_updates=True)

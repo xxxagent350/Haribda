@@ -192,7 +192,7 @@ def get_user_map_image(user):
     start_time = time.perf_counter()
     if user.current_map is not None:
         print(f'maps: {maps}')
-        map_ = maps[user.current_map]
+        map_ = user.current_map
     else:
         raise Exception(f'Невозможно сгенерировать изображение карты пользователю {user.name}, так как user.current_map == None')
 

@@ -6,8 +6,8 @@ from UI.map_visualizer import update_map_message_of_user
 from network import async_messages_operator
 from core.vector2 import Vector2
 from variables.maps_dict import maps
-from models import user
 from models.world_objects.ship import Ship
+from variables.users_dict import users_dict
 
 
 async def map_button_reaction(message: types.Message):
@@ -17,13 +17,13 @@ async def map_button_reaction(message: types.Message):
     # Проверяем команду
     if message.text == "Карта 🗺":
         # Получаем пользователя
-        user_ = user.users_dict[message.chat.id]
+        user_ = users_dict[message.chat.id]
 
         # Проверка есть ли у игрока корабль
         if user_.controlled_ship is None:
             player_ship = Ship(position=Vector2(randint(-2, 2), randint(-2, 2)), rotation=0, sprite_name=f'ship {randint(1, 5)}')
             player_ship.register_owner(user_)
-            maps[user_.current_map].add_new_object(player_ship)
+            user_.current_map.add_new_object(player_ship)
         else:
             for i in maps.keys():
                 for object_ in maps[i].objects:
