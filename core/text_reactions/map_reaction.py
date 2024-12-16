@@ -8,6 +8,7 @@ from core.vector2 import Vector2
 from variables.maps_dict import maps
 from models.world_objects.ship import Ship
 from variables.users_dict import users_dict
+from data_operators import db_operator
 
 
 async def map_button_reaction(message: types.Message):
@@ -22,8 +23,9 @@ async def map_button_reaction(message: types.Message):
         # Проверка есть ли у игрока корабль
         if user_.controlled_ship is None:
             player_ship = Ship(position=Vector2(randint(-2, 2), randint(-2, 2)), rotation=0, sprite_name=f'ship {randint(1, 5)}')
+            maps[user_.current_map_num].add_new_object(player_ship)
             player_ship.register_owner(user_)
-            user_.current_map.add_new_object(player_ship)
+            db_operator.update_user(message.chat.id, controlled_ship_id=player_ship.index)
         else:
             for i in maps.keys():
                 for object_ in maps[i].objects:

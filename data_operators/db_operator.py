@@ -104,18 +104,18 @@ def build_create_table_query(table_name, columns):
     column_definitions_str = ", ".join(column_definitions)
     return f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions_str})"
 
-def add_user(user_id, name=None, artefact=None, special_info=None, current_map_id=0):
+def add_user(user_id, name=None, artefacts=None, special_info=None, current_map_id=0):
     """
     :param user_id: ID пользователя
     :param name: Имя пользователя. При None генерируется автоматически
-    :param artefact: Артефакты
+    :param artefacts: Артефакты
     :param special_info: Дополнительная информация
     :param current_map_id: Номер карты, на которой сейчас находится корабль игрока
     :return:
     """
     if name is None:
         name = get_random_name()
-    artefact = artefact or []
+    artefacts = artefacts or []
     special_info = special_info or []
     try:
         with sqlite3.connect(db_path) as conn:
@@ -125,8 +125,9 @@ def add_user(user_id, name=None, artefact=None, special_info=None, current_map_i
                 INSERT INTO users_data (id, name, artefacts, special_info, current_map_id)
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                (user_id, name, List_in_Str(artefact), List_in_Str(special_info), current_map_id)
+                (user_id, name, List_in_Str(artefacts), List_in_Str(special_info), current_map_id)
             )
+            users_dict[user_id] = User(user_id=user_id, name=name, artefacts=artefacts, special_info=special_info, current_map_num=current_map_id)
             print(f"Пользователь '{name}' успешно добавлен!")
     except Exception as e:
         print(f"Ошибка при добавлении пользователя: {e}")
@@ -137,25 +138,14 @@ def try_get_user(user_id):
             cursor = conn.cursor()
             loaded_user_data = cursor.execute("SELECT * FROM users_data WHERE id = ?", (user_id,)).fetchone()
             if loaded_user_data:
-                loaded_user = User(loaded_user_data[0])
-                loaded_user.name = loaded_user_data[1]
-                loaded_user.artefacts = Str_in_List(loaded_user_data[2])
-                loaded_user.special_info = loaded_user_data[3]
-
-                # Поиск корабля игрока на картах
-                controlled_ship_id = loaded_user_data[4]
-                searching_complete = False
-                for map_ in maps.values():
-                    for object_ in map_.objects:
-                        if type(object_) == Ship and object_.index == controlled_ship_id:
-                            loaded_user.controlled_ship = object_
-                            searching_complete = True
-                            break
-                    if searching_complete:
-                        break
-
+                loaded_user = User(
+                    user_id=loaded_user_data[0],
+                    name=loaded_user_data[1],
+                    artefacts=Str_in_List(loaded_user_data[2]),
+                    special_info=Str_in_List(loaded_user_data[3]),
+                    controlled_ship_id=loaded_user_data[4])
                 if loaded_user_data[5] in maps:
-                    loaded_user.current_map = maps[loaded_user_data[5]]
+                    loaded_user.current_map_num = loaded_user_data[5]
                 return loaded_user
             else:
                 return None
@@ -163,7 +153,7 @@ def try_get_user(user_id):
         print(f"Ошибка при получении пользователя: {e}")
         return None
 
-def save_user(user_id, name=None, artefact=None, special_info=None, current_map=None, controlled_ship=None):
+def update_user(user_id, name=None, artefact=None, special_info=None, current_map=None, controlled_ship_id=None):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -180,8 +170,8 @@ def save_user(user_id, name=None, artefact=None, special_info=None, current_map=
                 cursor.execute("UPDATE users_data SET special_info = ? WHERE id = ?", (List_in_Str(special_info), user_id))
             if current_map is not None:
                 cursor.execute("UPDATE users_data SET current_map_id = ? WHERE id = ?", (current_map, user_id))
-            if controlled_ship is not None:
-                cursor.execute("UPDATE users_data SET controlled_ship_id = ? WHERE id = ?", (controlled_ship, user_id))
+            if controlled_ship_id is not None:
+                cursor.execute("UPDATE users_data SET controlled_ship_id = ? WHERE id = ?", (controlled_ship_id, user_id))
             print(f"Пользователь с ID {user_id} успешно обновлен!")
             return True
     except Exception as e:

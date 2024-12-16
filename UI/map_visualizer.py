@@ -190,9 +190,9 @@ def add_grid(
 
 def get_user_map_image(user):
     start_time = time.perf_counter()
-    if user.current_map is not None:
+    if user.current_map_num is not None:
         print(f'maps: {maps}')
-        map_ = user.current_map
+        map_ = maps[user.current_map_num]
     else:
         raise Exception(f'Невозможно сгенерировать изображение карты пользователю {user.name}, так как user.current_map == None')
 
@@ -231,7 +231,7 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
     if user.controlled_ship is None:
         print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан controlled_ship")
         return
-    if user.current_map is None:
+    if user.current_map_num is None:
         print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан current_map")
         return
 
@@ -241,7 +241,7 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
         map_image = None
 
     # Проверяем есть ли у игрока ожидаемые действия и если да то отображаем кнопку отмены
-    if not maps[user.current_map].check_if_object_has_delayed_actions(user.controlled_ship):
+    if not maps[user.current_map_num].check_if_object_has_delayed_actions(user.controlled_ship):
         new_reply_markup=inline_keyboard_buttons.ship_control_buttons
     else:
         new_reply_markup=inline_keyboard_buttons.cancel_button

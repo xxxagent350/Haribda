@@ -1,34 +1,39 @@
+from models.world_objects.ship import Ship
+from variables.maps_dict import maps
+
 
 # Класс пользователя, хранящий его достижения, настройки, и т. д.
 class User:
-    def __init__(self, user_id):
-        global users_dict
+    def __init__(self, user_id, name='not_set', artefacts=None, special_info ='', current_map_num = 0, controlled_ship_id = None):
+        """
+        :param user_id: ID пользователя
+        :param name: Имя
+        :param artefacts: Артефакты
+        :param special_info: Дополнительная информация
+        :param current_map_num: Номер текущей карты, на которой находится корабль игрока
+        :param controlled_ship_id: ID корабля, которым владеет пользователь. Будет выполнен поиск корабля по всем картам и зарегистрирован владелец корабля
+        """
         #Тут часто используемые
+        if artefacts is None:
+            artefacts = []
         self.id = user_id
-        self.name = ' ___ '
-        self.artefacts = []
-        self.special_info = ''
-        self.current_map = 0
+        self.name = name
+        self.artefacts = artefacts
+        self.special_info = special_info
+        self.current_map_num = current_map_num
         self.map_message_id = None
+        self.controlled_ship = None
 
-        self.controlled_ship = None;  """Задавать с помощью ship.register_owner(owner)"""
+        if controlled_ship_id is not None:
+            # Поиск корабля по ID
+            searching_complete = False
+            for map_ in maps.values():
+                for object_ in map_.objects:
+                    if type(object_) == Ship and object_.index == controlled_ship_id:
+                        object_.register_owner(self)
+                        searching_complete = True
+                        break
+                if searching_complete:
+                    break
 
 
-        '''
-        #получение информации об игроке с таким ID из базы данных
-        user, examination = get_user(user_id)
-
-        
-        if examination:
-            self.name, self.artefacts, self.special_info, self.controlled_ship, self.current_map  = user[1:]
-
-            if self.current_map is None:
-                self.current_map = 0
-        else:
-            self.__new_user()
-            #self.controlled_ship = Ship(self,Vector2(0,0),0, "ship 1",100, 4)
-            #maps[0].add_new_object(self.controlled_ship)
-            #print(maps[0].objects)
-            #maps[0].add_new_object(Ship(self, Vector2(2, 2), 0, "ship 3", 100, 4))
-        users_dict[user_id] = self
-        '''

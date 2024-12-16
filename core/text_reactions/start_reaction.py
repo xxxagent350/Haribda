@@ -2,6 +2,7 @@ import asyncio, os
 
 from aiogram.enums import ParseMode
 
+from data_operators.db_operator import try_get_user
 from variables.bot import bot
 from models.user import User
 from UI.keyboard_buttons import button_map
@@ -18,7 +19,7 @@ async def command_start(message: types.Message):
 
     # Проверяем, что команда "/start"
     if message.text == "/start":
-        caption = '''Добро пожаловать в мир Харибды! 🌊
+        caption = f'''Добро пожаловать в мир Харибды, {try_get_user(message.chat.id).name}! 🌊
 
 Мир поглощён океаном, монстры держат остатки человечества в страхе, а вы – капитан корабля, который должен выжить и помочь восстановить цивилизацию. 🚢
 

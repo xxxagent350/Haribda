@@ -1,6 +1,5 @@
 from core.images_operator import get_image_path_from_ship_name
 from core.vector2 import Vector2
-from models.user import User
 from models.world_objects.game_object import GameObject
 from models.world_objects.character import Character
 
@@ -31,7 +30,6 @@ class Ship(GameObject):
         """Регистрирует владельца корабля"""
         self.owner = owner
         owner.controlled_ship = self
-        owner.controlled_ship_id = self.index
 
     def move(self, direction):
         self.rotation = direction
