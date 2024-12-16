@@ -191,7 +191,6 @@ def add_grid(
 def get_user_map_image(user):
     start_time = time.perf_counter()
     if user.current_map_num is not None:
-        print(f'maps: {maps}')
         map_ = maps[user.current_map_num]
     else:
         raise Exception(f'Невозможно сгенерировать изображение карты пользователю {user.name}, так как user.current_map == None')
@@ -213,7 +212,7 @@ def get_user_map_image(user):
     _, buffer = cv2.imencode('.png', base_image)
     image_bytes = buffer.tobytes()
 
-    print(f'Время генерации картинки карты: {(time.perf_counter() - start_time) * 1000:.1f} мс')
+    #print(f'Время генерации картинки карты: {(time.perf_counter() - start_time) * 1000:.1f} мс')
     return types.BufferedInputFile(image_bytes, filename="map.png")
 
 
@@ -232,7 +231,7 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
         print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан controlled_ship")
         return
     if user.current_map_num is None:
-        print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан current_map")
+        print(f"Невозможно отобразить карту игроку {user.name}, так как у него не задан current_map_num")
         return
 
     if not dont_update_map_image:

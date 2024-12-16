@@ -14,11 +14,9 @@ from models.world_objects.ship import Ship
 
 from settings.global_settings import render_out_of_border_range
 
-from data_operators.maps_operator import save_maps
-
 game_active = True
 short_step_delay = 1 # Период обновления быстрых явлений(полёт снаряда, эффект взрыва и т. д.)
-step_delay = 5 # Стандартный период обновления(передвижения корабля, совершение погружения и т. д.); ДОЛЖЕН БЫТЬ КРАТНЫМ short_step_delay !!!
+step_delay = 3 # Стандартный период обновления(передвижения корабля, совершение погружения и т. д.); ДОЛЖЕН БЫТЬ КРАТНЫМ short_step_delay !!!
 
 
 # Запускает автоматическое совершение запланированных действие с заданным интервалом
@@ -96,12 +94,6 @@ def update_visual_map(map_):
                 if min_view_limits.x <= changed_square.x <= max_view_limits.x and min_view_limits.y <= changed_square.y <= max_view_limits.y:
                     showed_changed_squares[Vector2(changed_square.x, changed_square.y)] = True
                     users_to_update_map[object_.owner] = True
-
-    # Сохраняет карту
-    if len(users_to_update_map.keys()) != 0:
-        t = time.time()
-        save_maps()
-        print(f"Время сохранения карт : {time.time()-t}")
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():

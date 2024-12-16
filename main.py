@@ -4,6 +4,7 @@ import signal
 import traceback
 from data_operators import maps_operator
 from data_operators import db_operator
+from data_operators.maps_operator import save_maps
 
 # Инициализируем события
 from variables import event_manager
@@ -30,10 +31,21 @@ async def main():
     db_operator.init_db()
     db_operator.load_all_users()
 
+    asyncio.create_task(save_progress_with_period(global_settings.progress_saving_period))
     asyncio.create_task(process_game())
     await bot.delete_webhook(drop_pending_updates=True)
     print("Запуск завершён, к бою готов!")
     await dp.start_polling(bot, skip_updates=True)
+
+
+async def save_progress_with_period(saving_period):
+    while True:
+        await asyncio.sleep(saving_period)
+        try:
+            save_maps()
+            print(f'Прогресс сохранён ({get_full_current_date()})')
+        except Exception as exception:
+            print(f'Непредвиденная ошибка сохранения карт: {exception}')
 
 
 async def on_shutdown(dp):

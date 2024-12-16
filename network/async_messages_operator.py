@@ -83,7 +83,6 @@ async def try_strong_edit_message_media(
         try:
             if task in done:
                 await task  # Проверяем на исключения
-                print("Успешно изменено")
                 return True, message_id
         except:
             pass
