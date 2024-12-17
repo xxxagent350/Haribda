@@ -64,6 +64,6 @@ if __name__ == "__main__":
     folder = os.path.dirname(os.path.abspath(__file__))  # Путь к текущей папке
     extension = ".py"  # Искомое расширение файлов
     report_file = "report.txt"  # Название файла отчёта
-    ignored_paths = ['run', 'venv']  # Список игнорируемых файлов и папок
+    ignored_paths = ['project_info_generator.py', 'run', 'venv']  # Список игнорируемых файлов и папок
 
     generate_report(folder, extension, report_file, ignored_paths)
