@@ -26,30 +26,11 @@ class Ship(GameObject):
         self.onboard_team.append(Character())
         self.onboard_team.append(Character())
 
+
     def register_owner(self, owner):
         """Регистрирует владельца корабля"""
         self.owner = owner
         owner.controlled_ship = self
-
-    def move(self, direction):
-        self.rotation = direction
-        match direction:
-            case 0:  # Вверх
-                self.position.add(Vector2(0, 1))
-            case 45:
-                self.position.add(Vector2(-1, 1))
-            case -45:
-                self.position.add(Vector2(1, 1))
-            case 90:
-                self.position.add(Vector2(-1, 0))
-            case -90:
-                self.position.add(Vector2(1, 0))
-            case 135:
-                self.position.add(Vector2(-1, -1))
-            case -135:
-                self.position.add(Vector2(1, -1))
-            case 180:
-                self.position.add(Vector2(0, -1))
 
 
     def take_damage(self,damage):

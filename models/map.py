@@ -44,6 +44,12 @@ class Map:
         else:
             self.short_delayed_actions = actions_list
 
+    def check_if_square_is_free(self, position):
+        for object_ in self.objects:
+            if object_.position.x == position.x and object_.position.y == position.y:
+                return False
+        return True
+
     def check_if_object_has_delayed_actions(self, object_, short_actions = False):
         """Проверяет есть ли у объекта ожидаемые действия. Полезно для проверки есть ли уже у корабля действия в списке ожиданий, чтобы он не мог совершить более 1 действия за ход"""
         if not short_actions:

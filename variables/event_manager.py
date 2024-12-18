@@ -3,7 +3,7 @@ from models.event import Event
 from core.text_reactions.start_reaction import command_start
 from core.text_reactions.map_reaction import map_button_reaction
 
-from core.call_reactions.arrows_reaction import arrows_reaction
+from core.call_reactions.ship_movement_reaction import arrows_reaction
 from core.call_reactions.cancel_reaction import cancel_reaction
 
 text_event = Event()

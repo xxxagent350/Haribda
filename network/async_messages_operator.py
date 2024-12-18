@@ -5,7 +5,14 @@ import random
 from core import images_operator
 
 
-async def try_delete_message(chat_id, message_id) -> bool:
+async def try_delete_message(chat_id, message_id, delay = 0) -> bool:
+    """
+    :param chat_id: ID чата, в котором хотите удалить сообщение
+    :param message_id: ID сообщения, которое хотите удалить
+    :param delay: задержка перед удалением сообщения в секундах
+    :return: успех операции
+    """
+    await asyncio.sleep(delay)
     try:
         await bot.delete_message(chat_id=chat_id, message_id=message_id)
         return True
@@ -22,20 +29,6 @@ async def try_edit_message_text(chat_id, message_id, new_message_text) -> bool:
         print(f"$ Warning - message's {message_id} text in chat {chat_id} cannot be edited to '{new_message_text}': {exception}")
         return False
 
-'''async def test_edit():
-    message_id = 0
-    while True:
-        await asyncio.sleep(1)
-        result, new_message_id = await try_strong_edit_message_media(5609117794,
-                                                               message_id,
-                                                               f"Абобус {random.randint(0, 100)}",
-                                                               images_operator.get_image_from_ship_name(f"ship {random.randint(1, 5)}"),
-                                                               max_edit_wait_time=1)
-        if result:
-            message_id = new_message_id
-        else:
-            print("Завершение")
-            break'''
 
 async def try_strong_edit_message_media(
     chat_id,

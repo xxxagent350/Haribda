@@ -60,16 +60,18 @@ def process_map_iteration(map_, short_update):
     for delayed_action in delayed_actions_list:
         object_ = delayed_action.object_
         action_type = delayed_action.action_type
+        action_succeed = False
         if action_type == ActionType.move:
             map_.add_changed_square(object_)
             if type(object_) == Ship:
-                object_.move(delayed_action.value)
+                action_succeed = object_.try_move_at_dir(delayed_action.value, map_)
 
         # Добавляем действие в список на удаление
         delayed_actions_to_remove.append(delayed_action)
 
         # Помечаем также квадрат на котором стоит объект сейчас на случай если он сдвинулся
-        map_.add_changed_square(object_)
+        if action_succeed:
+            map_.add_changed_square(object_)
 
     # Удаляем выполненные запланированные действия
     if short_update:

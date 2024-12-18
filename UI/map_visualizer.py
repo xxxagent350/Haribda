@@ -243,7 +243,7 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
 
     # Проверяем есть ли у игрока ожидаемые действия и если да то отображаем кнопку отмены
     if not maps[user.current_map_num].check_if_object_has_delayed_actions(user.controlled_ship):
-        new_reply_markup=inline_keyboard_buttons.ship_control_buttons
+        new_reply_markup=inline_keyboard_buttons.get_ship_control_buttons(user)
     else:
         new_reply_markup=inline_keyboard_buttons.cancel_button
 
