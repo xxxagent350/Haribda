@@ -1,8 +1,13 @@
 import asyncio
 import os
+
+from PIL.ImageOps import scale
+
+from core.vector2 import Vector2
 from data_operators import pickle_operator
 from variables.maps_dict import maps
 from models.map import Map
+from models.world_objects.monster import Monster
 from settings import global_settings
 
 saved_maps_path = os.path.join(global_settings.data_path, 'maps.pkl')
@@ -30,6 +35,10 @@ def load_maps():
                 print(f'Повреждённый файл переименован в {damaged_file_path}')
         except Exception as exception:
             input(f'Непредвиденная ошибка при создании резервной копии файла с картами: {exception}. Если вы хотите пересоздать файл с сохранёнными картами(в этом случае данные предыдущего будут БЕЗВОЗВРАТНО ПОТЕРЯНЫ), нажмите enter')
-        maps.update({0 : Map()})
+
+        test_map = Map()
+        test_monster = Monster(Vector2(0, 4), 0, "gorinych", max_hp=30, agr_range=2, updates_to_move=2)
+        test_map.add_new_object(test_monster)
+        maps.update({0 : test_map})
         save_maps()
         print('Создан новый список карт')

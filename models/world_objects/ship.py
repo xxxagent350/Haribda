@@ -6,7 +6,7 @@ from models.world_objects.character import Character
 
 # Класс корабля, хранящий его статы
 class Ship(GameObject):
-    def __init__(self, position, rotation, sprite_name, max_hp = 100, view_range = 4):
+    def __init__(self, position, rotation, sprite_name, scale = 1, max_hp = 100, view_range = 4):
         """
         :param position: Стартовая позиция
         :param rotation: Стартовый поворот
@@ -14,7 +14,7 @@ class Ship(GameObject):
         :param max_hp: Максимальные ХП
         :param view_range: Радиус обзора в клетках (целое)
         """
-        super().__init__(position, rotation, get_image_path_from_ship_name(sprite_name))
+        super().__init__(position, rotation, get_image_path_from_ship_name(sprite_name), scale)
         self.owner = None
         self.max_hp = max_hp
         self.hp = max_hp

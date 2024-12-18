@@ -6,12 +6,14 @@ import asyncio
 
 from UI import inline_keyboard_buttons
 from core import images_operator
+from models.world_objects.monster import Monster
 from variables.maps_dict import maps
 from core.vector2 import Vector2
 from models.world_objects.ship import Ship
 from network.async_messages_operator import try_delete_message
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
+
 
 def create_background(width, height, color=(252, 141, 56)):  # RGB вместо HEX
     """Создание фона."""
@@ -38,7 +40,7 @@ def add_object(base_image, object_, position, rotation, pixels_in_cell):
     """Рендерит один отдельный объект с указанными позицией в пикселях(0, 0 = левый верхний угол) и поворотом в градусах"""
     object_type = type(object_)
 
-    if object_type == Ship:
+    if object_type == Ship or object_type == Monster:
         # Получаем изображение корабля в нужном формате
         ship_img = images_operator.get_cv2_image_from_path(object_.image_path)
 
@@ -46,7 +48,7 @@ def add_object(base_image, object_, position, rotation, pixels_in_cell):
         additive_scale = 1.1  # Дополнительное увеличение изображения (если хотите чтобы картинка слегка вылазила за грани ячейки)
         scale = pixels_in_cell / max(ship_img.shape[0], ship_img.shape[1])
 
-        add_image(base_image, ship_img, position, rotation, scale * additive_scale)
+        add_image(base_image, ship_img, position, rotation, scale * object_.scale * additive_scale)
 
 
 def add_image(base_image, image, position, rotation=0, scale=1.0):
