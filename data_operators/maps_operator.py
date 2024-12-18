@@ -1,8 +1,6 @@
 import asyncio
 import os
 
-from PIL.ImageOps import scale
-
 from core.vector2 import Vector2
 from data_operators import pickle_operator
 from variables.maps_dict import maps
