@@ -18,24 +18,24 @@ class GameObject:
         self.rotation = direction
         match direction:
             case 0:  # Вверх
-                return self.try_move_to(Vector2(0, 1), map_)
+                return self.try_move_with_delta(Vector2(0, 1), map_)
             case 45:
-                return self.try_move_to(Vector2(-1, 1), map_)
+                return self.try_move_with_delta(Vector2(-1, 1), map_)
             case -45:
-                return self.try_move_to(Vector2(1, 1), map_)
+                return self.try_move_with_delta(Vector2(1, 1), map_)
             case 90:
-                return self.try_move_to(Vector2(-1, 0), map_)
+                return self.try_move_with_delta(Vector2(-1, 0), map_)
             case -90:
-                return self.try_move_to(Vector2(1, 0), map_)
+                return self.try_move_with_delta(Vector2(1, 0), map_)
             case 135:
-                return self.try_move_to(Vector2(-1, -1), map_)
+                return self.try_move_with_delta(Vector2(-1, -1), map_)
             case -135:
-                return self.try_move_to(Vector2(1, -1), map_)
+                return self.try_move_with_delta(Vector2(1, -1), map_)
             case 180:
-                return self.try_move_to(Vector2(0, -1), map_)
+                return self.try_move_with_delta(Vector2(0, -1), map_)
 
 
-    def try_move_to(self, delta_position, map_) -> bool:
+    def try_move_with_delta(self, delta_position, map_) -> bool:
         if map_.check_if_square_is_free(self.position.summ(delta_position)):
             self.position.add(delta_position)
             return True

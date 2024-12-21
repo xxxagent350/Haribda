@@ -1,11 +1,12 @@
 import asyncio
+import math
 import time
+from random import randint
 
-#from signal import pthread_sigmask
-
+from models.world_objects.monster import Monster
 from variables.maps_dict import maps
 from core.vector2 import Vector2
-from core.action import ActionType
+from core.action import ActionType, Action
 from UI.map_visualizer import update_map_message_of_user
 
 # Импорт объектов карты
@@ -40,17 +41,65 @@ async def process_game():
     while game_active:
         await asyncio.sleep(short_step_delay)
         for map_ in maps.values():
-            process_map_iteration(map_, True)
-            short_step_num += 1
-            if short_step_num >= short_steps_in_basic_step:
-                process_map_iteration(map_, False)
-                short_step_num = 0
+            try:
+                process_delayed_actions_on_map(map_, True)
+                short_step_num += 1
+                if short_step_num >= short_steps_in_basic_step:
+                    process_ai_on_map(map_)
+                    process_delayed_actions_on_map(map_, False)
+                    short_step_num = 0
 
-            update_visual_map(map_)
+                update_visual_map(map_)
+            except Exception as exception:
+                print(f'Непредвиденная ошибка в game_core.process_game: {exception}')
+
+
+# Логика ботов
+def process_ai_on_map(map_):
+    for monster in map_.objects:
+        try:
+            if type(monster) == Monster:
+                # Определение цели монстра
+                if monster.target is None:
+                    for target in map_.objects:
+                        if type(target) == Ship:
+                            distance = math.sqrt((monster.position.x - target.position.x) ** 2 + (monster.position.y - target.position.y) ** 2)
+                            if distance < monster.agr_range + 0.5:
+                                monster.target = target
+                else:
+                    # Проверка не убежала ли цель из зоны видимости
+                    distance = math.sqrt((monster.position.x - monster.target.position.x) ** 2 + (monster.position.y - monster.target.position.y) ** 2)
+                    if distance > monster.view_range + 0.5:
+                        monster.target = None
+
+                    # Проверка находится ли цель в зоне атаки
+                    if distance < monster.attack_range + 0.5:
+                        # Тут дописать атаку
+                        continue
+
+                    # Движение монстра к цели
+                    monster.updates_num_from_last_move += 1
+                    if not monster.updates_num_from_last_move >= monster.updates_to_move:
+                        continue
+                    else:
+                        monster.updates_num_from_last_move = 0
+
+                    move_delta = Vector2()
+                    if monster.position.x < monster.target.position.x:
+                        move_delta.x = 1
+                    if monster.position.x > monster.target.position.x:
+                        move_delta.x = -1
+                    if monster.position.y < monster.target.position.y:
+                        move_delta.y = 1
+                    if monster.position.y > monster.target.position.y:
+                        move_delta.y = -1
+                    map_.add_new_delayed_action(Action(monster, ActionType.move, move_delta))
+        except Exception as exception:
+            print(f'Непредвиденная ошибка в game_core.process_ai_on_map: {exception}')
 
 
 # Совершение запланированных действий
-def process_map_iteration(map_, short_update):
+def process_delayed_actions_on_map(map_, short_update):
     if not short_update:
         delayed_actions_list = map_.delayed_actions
     else:
@@ -58,20 +107,27 @@ def process_map_iteration(map_, short_update):
 
     delayed_actions_to_remove = []
     for delayed_action in delayed_actions_list:
-        object_ = delayed_action.object_
-        action_type = delayed_action.action_type
-        action_succeed = False
-        if action_type == ActionType.move:
-            map_.add_changed_square(object_)
-            if type(object_) == Ship:
-                action_succeed = object_.try_move_at_dir(delayed_action.value, map_)
+        try:
+            object_ = delayed_action.object_
+            action_type = delayed_action.action_type
+            action_succeed = False
+            if action_type == ActionType.move:
+                # Обработчик движения
+                map_.add_changed_square(object_)
+                if type(delayed_action.value) == Vector2:
+                    action_succeed = object_.try_move_with_delta(delayed_action.value, map_)
+                else:
+                    action_succeed = object_.try_move_at_dir(delayed_action.value, map_)
 
-        # Добавляем действие в список на удаление
-        delayed_actions_to_remove.append(delayed_action)
+            # Добавляем действие в список на удаление
+            delayed_actions_to_remove.append(delayed_action)
 
-        # Помечаем также квадрат на котором стоит объект сейчас на случай если он сдвинулся
-        if action_succeed:
-            map_.add_changed_square(object_)
+            # Помечаем также квадрат на котором стоит объект сейчас на случай если он сдвинулся
+            if action_succeed:
+                map_.add_changed_square(object_)
+        except Exception as exception:
+            print(f'Непредвиденная ошибка в game_core.process_map_iteration: {exception}')
+            delayed_actions_to_remove.append(delayed_action)
 
     # Удаляем выполненные запланированные действия
     if short_update:

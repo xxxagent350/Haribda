@@ -35,7 +35,7 @@ def load_maps():
             input(f'Непредвиденная ошибка при создании резервной копии файла с картами: {exception}. Если вы хотите пересоздать файл с сохранёнными картами(в этом случае данные предыдущего будут БЕЗВОЗВРАТНО ПОТЕРЯНЫ), нажмите enter')
 
         test_map = Map()
-        test_monster = Monster(Vector2(0, 4), 0, "gorinych", max_hp=30, agr_range=2, updates_to_move=2)
+        test_monster = Monster(Vector2(0, 4), 0, "gorinych", max_hp=30, agr_range=3, view_range=4, updates_to_move=2)
         test_map.add_new_object(test_monster)
         maps.update({0 : test_map})
         save_maps()
