@@ -12,6 +12,7 @@ from UI.map_visualizer import update_map_message_of_user
 # Импорт объектов карты
 from models.user import User
 from models.world_objects.ship import Ship
+from models.world_objects.debris import Debris
 
 from settings.global_settings import render_out_of_border_range
 
@@ -98,6 +99,13 @@ def update_visual_map(map_):
     showed_changed_squares = dict() # Сюда добавляем квадраты на карте, которые уже были "погашены", то есть игроки их увидели
     users_to_update_map = dict()
     for object_ in map_.objects:
+        if type(object_) == Debris:
+            if object_.decrement_lifetime():
+                map_.objects.remuve(object_)
+        if type(object_) == Ship:
+            if not object_.life_check():
+                map_.objects.append(Debris(object_.position,0,"debris.py", 3))
+                map_.objects.remuve(object_)
         if type(object_) == Ship and type(object_.owner) == User:
             min_view_limits = object_.position.summ(Vector2(-object_.view_range - render_out_of_border_range, -object_.view_range - render_out_of_border_range))
             max_view_limits = object_.position.summ(Vector2(object_.view_range + render_out_of_border_range, object_.view_range + render_out_of_border_range))
