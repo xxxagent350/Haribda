@@ -25,17 +25,6 @@ async def process_game():
     if step_delay % short_step_delay != 0:
         raise Exception("$ Невозможно запустить game_core.process_game, так как step_delay не кратен short_step_delay, а это условие обязательно")
 
-    '''test_map = maps[0]
-    test_user = User(5609117794)
-    test_ship = Ship(owner=test_user, sprite_name=f"ship {2}", position=Vector2(2, 5), rotation=90, max_hp=100)
-    test_ship2 = Ship(owner=None, sprite_name=f"ship {4}", position=Vector2(1, 2), rotation=180, max_hp=100)
-    test_user.controlled_ship = test_ship
-    test_user.current_map = test_map
-    test_action = Action(object_=test_ship, action_type=ActionType.move, value=180)
-    test_map.add_new_object(test_ship)
-    test_map.add_new_object(test_ship2)
-    test_map.add_new_delayed_action(test_action)'''
-
     short_step_num = 0
     short_steps_in_basic_step = int(step_delay / short_step_delay) # Раз в сколько быстрых обновлений делать стандартное обновление
     while game_active:
@@ -59,41 +48,7 @@ def process_ai_on_map(map_):
     for monster in map_.objects:
         try:
             if type(monster) == Monster:
-                # Определение цели монстра
-                if monster.target is None:
-                    for target in map_.objects:
-                        if type(target) == Ship:
-                            distance = math.sqrt((monster.position.x - target.position.x) ** 2 + (monster.position.y - target.position.y) ** 2)
-                            if distance < monster.agr_range + 0.5:
-                                monster.target = target
-                else:
-                    # Проверка не убежала ли цель из зоны видимости
-                    distance = math.sqrt((monster.position.x - monster.target.position.x) ** 2 + (monster.position.y - monster.target.position.y) ** 2)
-                    if distance > monster.view_range + 0.5:
-                        monster.target = None
-
-                    # Проверка находится ли цель в зоне атаки
-                    if distance < monster.attack_range + 0.5:
-                        # Тут дописать атаку
-                        continue
-
-                    # Движение монстра к цели
-                    monster.updates_num_from_last_move += 1
-                    if not monster.updates_num_from_last_move >= monster.updates_to_move:
-                        continue
-                    else:
-                        monster.updates_num_from_last_move = 0
-
-                    move_delta = Vector2()
-                    if monster.position.x < monster.target.position.x:
-                        move_delta.x = 1
-                    if monster.position.x > monster.target.position.x:
-                        move_delta.x = -1
-                    if monster.position.y < monster.target.position.y:
-                        move_delta.y = 1
-                    if monster.position.y > monster.target.position.y:
-                        move_delta.y = -1
-                    map_.add_new_delayed_action(Action(monster, ActionType.move, move_delta))
+                monster.process_monster_logics(map_)
         except Exception as exception:
             print(f'Непредвиденная ошибка в game_core.process_ai_on_map: {exception}')
 
