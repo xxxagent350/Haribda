@@ -13,6 +13,7 @@ from models.world_objects.ship import Ship
 from network.async_messages_operator import try_delete_message
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
+from models.world_objects.debris import Debris
 
 
 def create_background(width, height, color=(252, 141, 56)):  # RGB вместо HEX
@@ -40,7 +41,7 @@ def add_object(base_image, object_, position, rotation, pixels_in_cell):
     """Рендерит один отдельный объект с указанными позицией в пикселях(0, 0 = левый верхний угол) и поворотом в градусах"""
     object_type = type(object_)
 
-    if object_type == Ship or object_type == Monster:
+    if object_type == Ship or object_type == Monster or object_type == Debris:
         # Получаем изображение корабля в нужном формате
         ship_img = images_operator.get_cv2_image_from_path(object_.image_path)
 
