@@ -45,5 +45,38 @@ class Ship(GameObject):
         else:
             return False
         # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана
+    def c(self):
+        if self.hp < 0:
+            return False
+        else:
+            return True
 
+    def try_move_at_dir(self, direction, map_) -> bool:
+        self.rotation = direction
+        self.take_damage( self ,  1 )
+        match direction:
+            case 0:  # Вверх
+                return self.try_move_with_delta(Vector2(0, 1), map_)
+            case 45:
+                return self.try_move_with_delta(Vector2(-1, 1), map_)
+            case -45:
+                return self.try_move_with_delta(Vector2(1, 1), map_)
+            case 90:
+                return self.try_move_with_delta(Vector2(-1, 0), map_)
+            case -90:
+                return self.try_move_with_delta(Vector2(1, 0), map_)
+            case 135:
+                return self.try_move_with_delta(Vector2(-1, -1), map_)
+            case -135:
+                return self.try_move_with_delta(Vector2(1, -1), map_)
+            case 180:
+                return self.try_move_with_delta(Vector2(0, -1), map_)
+
+
+    def get_teem_skill(self):
+        skills = []
+        for i in self.onboard_team:
+            if i.skill is not None:
+                skills.append(i.skill)
+        return skills
 
