@@ -50,8 +50,10 @@ class Monster(GameObject):
             for target in map_.objects:
                 if type(target) == Ship:
                     distance = math.sqrt((self.position.x - target.position.x) ** 2 + (self.position.y - target.position.y) ** 2)
-                    if distance < self.agr_range + 0.5 and :
-                        self.target = target
+                    if distance < self.agr_range + 0.5 and distance < nearest_distance:
+                        nearest_target = target
+                        nearest_distance = distance
+            self.target = nearest_target
 
             if self.target is not None:
                 # Проверка не убежала ли цель из зоны видимости
