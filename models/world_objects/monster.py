@@ -1,5 +1,10 @@
+import math
+
+from core.action import ActionType, Action
+from core.vector2 import Vector2
 from models.world_objects.game_object import GameObject
 from core import images_operator
+from models.world_objects.ship import Ship
 
 
 class Monster(GameObject):
@@ -34,3 +39,51 @@ class Monster(GameObject):
             raise Exception(f'Ошибка при создании экземпляра класса Monster: updates_to_move должен быть типа int, а он типа {type(updates_to_move)}')
         if updates_to_move < 1:
             raise Exception(f'Ошибка при создании экземпляра класса Monster: updates_to_move должен быть более 0 (ваше значение - {updates_to_move})')
+
+
+    # Логика ботов
+    def process_monster_logics(self, map_):
+        try:
+            # Определение цели монстра
+            nearest_target = None
+            nearest_distance = self.agr_range + 999
+            for target in map_.objects:
+                if type(target) == Ship:
+                    distance = math.sqrt((self.position.x - target.position.x) ** 2 + (self.position.y - target.position.y) ** 2)
+                    if distance < self.agr_range + 0.5 and :
+                        self.target = target
+
+            if self.target is not None:
+                # Проверка не убежала ли цель из зоны видимости
+                distance = math.sqrt((self.position.x - self.target.position.x) ** 2 + (self.position.y - self.target.position.y) ** 2)
+                if distance > self.view_range + 0.5:
+                    self.target = None
+
+                # Проверка находится ли цель в зоне атаки
+                if distance < self.attack_range + 0.5:
+                    # Тут дописать атаку
+                    return
+
+                # Движение монстра к цели
+                self.updates_num_from_last_move += 1
+                if not self.updates_num_from_last_move >= self.updates_to_move:
+                    return
+                else:
+                    self.updates_num_from_last_move = 0
+
+                move_delta = Vector2()
+                if self.position.x < self.target.position.x:
+                    move_delta.x = 1
+                if self.position.x > self.target.position.x:
+                    move_delta.x = -1
+                if self.position.y < self.target.position.y:
+                    move_delta.y = 1
+                if self.position.y > self.target.position.y:
+                    move_delta.y = -1
+                map_.add_new_delayed_action(Action(self, ActionType.move, move_delta))
+
+        except Exception as exception:
+            print(f'Непредвиденная ошибка в monster.process_monster_logics: {exception}')
+
+
+
