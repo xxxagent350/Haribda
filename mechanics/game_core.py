@@ -41,7 +41,7 @@ async def process_game():
 
                 update_visual_map(map_)
             except Exception as exception:
-                print(f'Непредвиденная ошибка в game_core.process_game: {exception}')
+                print(f'Непредвиденная критическая ошибка в game_core.process_game: {exception}')
 
 
 # Логика ботов
@@ -104,7 +104,7 @@ def update_visual_map(map_):
                 map_.objects.pop(i)
         if type(object_) == Ship:
             if not object_.life_check():
-                map_.objects.append(Debris(object_.position,0,"debris.py", 3))
+                map_.objects.append(Debris(object_.position,0,"debris", 3))
                 map_.objects.pop(i)
         if type(object_) == Ship and type(object_.owner) == User:
             min_view_limits = object_.position.summ(Vector2(-object_.view_range - render_out_of_border_range, -object_.view_range - render_out_of_border_range))
