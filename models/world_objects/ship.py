@@ -2,6 +2,7 @@ from core.images_operator import get_image_path_from_ship_name
 from core.vector2 import Vector2
 from models.world_objects.game_object import GameObject
 from models.world_objects.character import Character
+import random
 
 
 # Класс корабля, хранящий его статы
@@ -45,7 +46,7 @@ class Ship(GameObject):
         else:
             return False
         # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана
-    def c(self):
+    def life_check(self):
         if self.hp < 0:
             return False
         else:
@@ -53,9 +54,11 @@ class Ship(GameObject):
 
     def try_move_at_dir(self, direction, map_) -> bool:
         self.rotation = direction
-        self.take_damage( self ,  1 )
+        if self.hp == 0 and random.randint(1,2) == 1:
+            self.take_damage( 1 )
         match direction:
             case 0:  # Вверх
+                self.take_damage(50)
                 return self.try_move_with_delta(Vector2(0, 1), map_)
             case 45:
                 return self.try_move_with_delta(Vector2(-1, 1), map_)

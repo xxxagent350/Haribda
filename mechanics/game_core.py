@@ -98,14 +98,14 @@ def process_delayed_actions_on_map(map_, short_update):
 def update_visual_map(map_):
     showed_changed_squares = dict() # Сюда добавляем квадраты на карте, которые уже были "погашены", то есть игроки их увидели
     users_to_update_map = dict()
-    for object_ in map_.objects:
+    for i,object_ in enumerate(map_.objects):
         if type(object_) == Debris:
             if object_.decrement_lifetime():
-                map_.objects.remuve(object_)
+                map_.objects.pop(i)
         if type(object_) == Ship:
             if not object_.life_check():
                 map_.objects.append(Debris(object_.position,0,"debris.py", 3))
-                map_.objects.remuve(object_)
+                map_.objects.pop(i)
         if type(object_) == Ship and type(object_.owner) == User:
             min_view_limits = object_.position.summ(Vector2(-object_.view_range - render_out_of_border_range, -object_.view_range - render_out_of_border_range))
             max_view_limits = object_.position.summ(Vector2(object_.view_range + render_out_of_border_range, object_.view_range + render_out_of_border_range))
