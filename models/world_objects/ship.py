@@ -3,6 +3,7 @@ from core.vector2 import Vector2
 from models.user import User
 from models.world_objects.game_object import GameObject
 from models.world_objects.character import Character
+from UI import map_visualizer
 import random
 
 
@@ -46,6 +47,7 @@ class Ship(GameObject):
         """
         self.hp -= damage
         if self.owner is not None and type(self.owner) == User:
+            map_visualizer.add_map_message_update_request(self.owner, True)
 
         if self.hp <= 0:
             # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана

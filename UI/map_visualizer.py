@@ -14,6 +14,7 @@ from network.async_messages_operator import try_delete_message
 from settings.global_settings import render_out_of_border_range
 from network import async_messages_operator
 from models.world_objects.debris import Debris
+from variables.users_dict import users_dict
 
 
 def create_background(width, height, color=(252, 141, 56)):  # RGB вместо HEX
@@ -219,17 +220,24 @@ def get_user_map_image(user):
     return types.BufferedInputFile(image_bytes, filename="map.png")
 
 
-map_message_update_requests = dict()
+map_message_update_requests = dict() # True - надо обновлять картинку, False - не надо
 
-async def add_map_message_update_request(user, dont_update_map_image = False, iteration_num = 0):
+def add_map_message_update_request(user, dont_update_map_image = False):
     """
     Добавит запрос на обновление сообщения карты(карта будет обновлена после следующего цикла short update)
     :param user: Пользователь, которому обновить сообщение с картой
     :param dont_update_map_image: При True не обновляет изображение карты(полезно если нужно обновить только кнопки или текст)
-    :param iteration_num: Номер попытки, нужен для предотвращения бесконечного цикла
     """
-    map_message_update_requests[user.id] =
+    if not user.id in map_message_update_requests:
+        map_message_update_requests[user.id] = not dont_update_map_image
+    else:
+        if map_message_update_requests[user.id] is False:
+            map_message_update_requests[user.id] = not dont_update_map_image
 
+def update_map_messages_of_all_users():
+    for user_id, update_map_image in map_message_update_requests.items():
+        asyncio.create_task(update_map_message_of_user(users_dict[user_id], not update_map_image))
+    map_message_update_requests.clear()
 
 async def update_map_message_of_user(user, dont_update_map_image = False, iteration_num = 0):
     """
@@ -268,5 +276,5 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
     else:
         await try_delete_message(user.id, new_message_id)
         user.map_message_id = None
-        asyncio.create_task(add_map_message_update_request(user, iteration_num=iteration_num + 1))
+        asyncio.create_task(update_map_message_of_user(user, dont_update_map_image, iteration_num=iteration_num + 1))
         print(f"Неудача изменения сообщения с картой, генерирую и высылаю заново({iteration_num})...")

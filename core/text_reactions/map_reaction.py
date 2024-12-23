@@ -38,4 +38,4 @@ async def map_button_reaction(message: types.Message):
         # Удаляем старую карту если она была и отсылаем новую
         asyncio.create_task(async_messages_operator.try_delete_message(user_.id, user_.map_message_id))
         user_.map_message_id = None
-        asyncio.create_task(add_map_message_update_request(user_))
+        add_map_message_update_request(user_)

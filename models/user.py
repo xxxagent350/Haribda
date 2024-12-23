@@ -1,4 +1,3 @@
-from models.world_objects.ship import Ship
 from variables.maps_dict import maps
 
 
@@ -29,6 +28,7 @@ class User:
             searching_complete = False
             for map_ in maps.values():
                 for object_ in map_.objects:
+                    from models.world_objects.ship import Ship
                     if type(object_) == Ship and object_.index == controlled_ship_id:
                         object_.register_owner(self)
                         searching_complete = True

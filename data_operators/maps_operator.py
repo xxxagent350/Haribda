@@ -1,5 +1,6 @@
 import asyncio
 import os
+from random import randint
 
 from core.vector2 import Vector2
 from data_operators import pickle_operator
@@ -35,8 +36,11 @@ def load_maps():
             input(f'Непредвиденная ошибка при создании резервной копии файла с картами: {exception}. Если вы хотите пересоздать файл с сохранёнными картами(в этом случае данные предыдущего будут БЕЗВОЗВРАТНО ПОТЕРЯНЫ), нажмите enter')
 
         test_map = Map()
-        test_monster = Monster(Vector2(0, 4), 0, "gorinych", max_hp=30, agr_range=3, view_range=4, updates_to_move=2)
-        test_map.add_new_object(test_monster)
+        for i in range(10000):
+            x = randint(-500, 500)
+            y = randint(-50, 50)
+            if test_map.check_if_square_is_free(Vector2(x, y)):
+                test_map.add_new_object(Monster(Vector2(x, y), 0, "gorinych", max_hp=30, agr_range=3, view_range=4, updates_to_move=2))
         maps.update({0 : test_map})
         save_maps()
         print('Создан новый список карт')

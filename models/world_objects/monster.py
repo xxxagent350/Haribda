@@ -58,13 +58,15 @@ class Monster(GameObject):
                     if distance < self.agr_range + 0.5 and distance < nearest_distance:
                         nearest_target = target
                         nearest_distance = distance
-            self.target = nearest_target
+            if nearest_target is not None: # Оставляем возможность продолжать монстру видеть цель, если она всё ещё в поле зрения view_range
+                self.target = nearest_target
 
             if self.target is not None:
                 # Проверка не убежала ли цель из зоны видимости
                 distance = math.sqrt((self.position.x - self.target.position.x) ** 2 + (self.position.y - self.target.position.y) ** 2)
                 if distance > self.view_range + 0.5:
                     self.target = None
+                    return
 
                 if distance < self.attack_range + 0.5:
                     return
