@@ -34,11 +34,15 @@ class Ship(GameObject):
         owner.controlled_ship = self
 
 
-    def take_damage(self,damage):
+    def take_damage(self,damage, type_damage = "physical"):
         """
         Функция получения кораблём урона и проверки на уничтожение.
         :param damage: Целое положительное число
         :return: удалось ли этой атаке уничтожить корабль
+
+        Типы урона :
+        physical - физический
+        monster - урон наносимый монстром
         """
         self.hp -= damage
         if self.hp < 0:
