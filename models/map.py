@@ -26,7 +26,7 @@ class Map:
         """
         # Обновляем сообщение карты, чтобы добавить кнопку Отмена
         if not short_action and type(new_action.object_) == Ship and type(new_action.object_.owner) == User:
-            asyncio.create_task(map_visualizer.update_map_message_of_user(new_action.object_.owner, True))
+            asyncio.create_task(map_visualizer.add_map_message_update_request(new_action.object_.owner, True))
             pass
 
 

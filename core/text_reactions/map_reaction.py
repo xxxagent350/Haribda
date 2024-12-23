@@ -2,7 +2,7 @@ import asyncio
 from random import randint
 
 from aiogram import types
-from UI.map_visualizer import update_map_message_of_user
+from UI.map_visualizer import add_map_message_update_request
 from network import async_messages_operator
 from core.vector2 import Vector2
 from variables.maps_dict import maps
@@ -38,4 +38,4 @@ async def map_button_reaction(message: types.Message):
         # Удаляем старую карту если она была и отсылаем новую
         asyncio.create_task(async_messages_operator.try_delete_message(user_.id, user_.map_message_id))
         user_.map_message_id = None
-        asyncio.create_task(update_map_message_of_user(user_))
+        asyncio.create_task(add_map_message_update_request(user_))

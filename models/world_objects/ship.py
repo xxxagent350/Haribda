@@ -1,5 +1,6 @@
 from core.images_operator import get_image_path_from_ship_name
 from core.vector2 import Vector2
+from models.user import User
 from models.world_objects.game_object import GameObject
 from models.world_objects.character import Character
 import random
@@ -33,23 +34,25 @@ class Ship(GameObject):
         self.owner = owner
         owner.controlled_ship = self
 
-
-    def take_damage(self,damage, type_damage = "physical"):
+    def take_damage(self, damage, damage_type="physical"):
         """
         Функция получения кораблём урона и проверки на уничтожение.
         :param damage: Целое положительное число
         :return: удалось ли этой атаке уничтожить корабль
 
-        Типы урона :
+        Типы урона:
         physical - физический
         monster - урон наносимый монстром
         """
         self.hp -= damage
-        if self.hp < 0:
+        if self.owner is not None and type(self.owner) == User:
+
+        if self.hp <= 0:
+            # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана
             return True
         else:
             return False
-        # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана
+
     def life_check(self):
         if self.hp < 0:
             return False

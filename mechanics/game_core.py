@@ -7,7 +7,7 @@ from models.world_objects.monster import Monster
 from variables.maps_dict import maps
 from core.vector2 import Vector2
 from core.action import ActionType, Action
-from UI.map_visualizer import update_map_message_of_user
+from UI.map_visualizer import add_map_message_update_request
 
 # Импорт объектов карты
 from models.user import User
@@ -127,7 +127,7 @@ def update_visual_map(map_):
 
     # Отсылаем карты заново кому надо
     for user in users_to_update_map.keys():
-        asyncio.create_task(update_map_message_of_user(user))
+        asyncio.create_task(add_map_message_update_request(user))
 
     # Удаляем "погашенные" квадраты из списка
     for showed_changed_square in showed_changed_squares.keys():

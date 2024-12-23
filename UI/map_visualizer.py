@@ -219,10 +219,22 @@ def get_user_map_image(user):
     return types.BufferedInputFile(image_bytes, filename="map.png")
 
 
+map_message_update_requests = dict()
+
+async def add_map_message_update_request(user, dont_update_map_image = False, iteration_num = 0):
+    """
+    Добавит запрос на обновление сообщения карты(карта будет обновлена после следующего цикла short update)
+    :param user: Пользователь, которому обновить сообщение с картой
+    :param dont_update_map_image: При True не обновляет изображение карты(полезно если нужно обновить только кнопки или текст)
+    :param iteration_num: Номер попытки, нужен для предотвращения бесконечного цикла
+    """
+    map_message_update_requests[user.id] =
+
+
 async def update_map_message_of_user(user, dont_update_map_image = False, iteration_num = 0):
     """
     Генерация карты и отправка пользователю
-    :param user: Пользователь которому обновить сообщение с картой
+    :param user: Пользователь, которому обновить сообщение с картой
     :param dont_update_map_image: При True не обновляет изображение карты(полезно если нужно обновить только кнопки или текст)
     :param iteration_num: Номер попытки, нужен для предотвращения бесконечного цикла
     """
@@ -256,5 +268,5 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
     else:
         await try_delete_message(user.id, new_message_id)
         user.map_message_id = None
-        asyncio.create_task(update_map_message_of_user(user, iteration_num=iteration_num + 1))
+        asyncio.create_task(add_map_message_update_request(user, iteration_num=iteration_num + 1))
         print(f"Неудача изменения сообщения с картой, генерирую и высылаю заново({iteration_num})...")

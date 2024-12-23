@@ -12,4 +12,4 @@ async def cancel_reaction(message: types.CallbackQuery):
     if message.data == "cancel":
         if message.message.chat.id in users_dict and users_dict[message.message.chat.id].current_map_num is not None and users_dict[message.message.chat.id].controlled_ship is not None:
             maps[users_dict[message.message.chat.id].current_map_num].cancel_object_delayed_actions(users_dict[message.message.chat.id].controlled_ship)
-            asyncio.create_task(map_visualizer.update_map_message_of_user(users_dict[message.message.chat.id], True))
+            asyncio.create_task(map_visualizer.add_map_message_update_request(users_dict[message.message.chat.id], True))
