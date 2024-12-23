@@ -62,7 +62,6 @@ class Ship(GameObject):
             self.take_damage( 1 )
         match direction:
             case 0:  # Вверх
-                self.take_damage(50)
                 return self.try_move_with_delta(Vector2(0, 1), map_)
             case 45:
                 return self.try_move_with_delta(Vector2(-1, 1), map_)

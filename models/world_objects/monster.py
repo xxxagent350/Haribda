@@ -8,7 +8,7 @@ from models.world_objects.ship import Ship
 
 
 class Monster(GameObject):
-    def __init__(self, position, rotation, sprite_name, max_hp, damage = 2, reload = 3, scale = 1, agr_range = 2, attack_range = 1, view_range = 3, freeze_rotation_at = None, updates_to_move = 1):
+    def __init__(self, position, rotation, sprite_name, max_hp, damage = 10, reload = 3, scale = 1, agr_range = 2, attack_range = 1, view_range = 3, freeze_rotation_at = None, updates_to_move = 1):
         """
         Монстр
         :param position: стартовая позиция

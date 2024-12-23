@@ -14,7 +14,7 @@ class Debris(GameObject):
         super().__init__(position, rotation, get_image_path_from_ship_name(sprite_name))
         self.lifetime = lifetime  # Количество обновлений до удаления
 
-    def decrement_lifetime(self, delta):
+    def decrement_lifetime(self, delta = 1):
         """Уменьшает оставшееся время жизни обломков. Если время истекло, возвращает True."""
         self.lifetime -= delta
         return self.lifetime <= 0
