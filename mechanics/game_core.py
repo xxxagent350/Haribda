@@ -33,12 +33,12 @@ async def process_game():
         for map_ in maps.values():
             try:
                 process_delayed_actions_on_map(map_, True)
+                process_monsters_attack_on_map(map_)
                 short_step_num += 1
                 if short_step_num >= short_steps_in_basic_step:
                     process_ai_on_map(map_)
                     process_delayed_actions_on_map(map_, False)
                     short_step_num = 0
-
                 update_visual_map(map_)
             except Exception as exception:
                 print(f'Непредвиденная критическая ошибка в game_core.process_game: {exception}')
@@ -52,6 +52,15 @@ def process_ai_on_map(map_):
                 monster.process_monster_logics(map_)
         except Exception as exception:
             print(f'Непредвиденная ошибка в game_core.process_ai_on_map: {exception}')
+
+
+def process_monsters_attack_on_map(map_):
+    for monster in map_.objects:
+        try:
+            if type(monster) == Monster:
+                monster.attack()
+        except Exception as exception:
+            print(f'Непредвиденная ошибка в game_core.process_monsters_on_map: {exception}')
 
 
 # Совершение запланированных действий
