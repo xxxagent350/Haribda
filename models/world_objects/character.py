@@ -22,7 +22,7 @@ class Character:
         self.harvest = 1
         self.attack = 1
         self.survival = 1
-        self.stamina = 1
+        self.max_stamina = 1
 
         while point > 0:
             if random.randint(1,6) == 1:
@@ -34,8 +34,9 @@ class Character:
             elif random.randint(1,3) == 1:
                 self.survival += 1
             else:
-                self.stamina += 2
+                self.max_stamina += 2
             point -= 1
+        self.stamina = self.max_stamina
         self.__skill_gen()
 
 

@@ -30,7 +30,7 @@ class Ship(GameObject):
 
     def register_owner(self, owner):
         """Регистрирует владельца корабля"""
-        self.owner = owner
+        self.owenr = owner
         owner.controlled_ship = self
 
 
@@ -86,4 +86,9 @@ class Ship(GameObject):
             if i.skill is not None:
                 skills.append(i.skill)
         return skills
+
+    def get_status(self):
+        return f"""HP : {self.hp}\n{" ".join(self.get_teem_skill())}"""
+
+
 

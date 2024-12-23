@@ -248,7 +248,7 @@ async def update_map_message_of_user(user, dont_update_map_image = False, iterat
     else:
         new_reply_markup=inline_keyboard_buttons.cancel_button
 
-    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption="Это карта", new_reply_markup=new_reply_markup)
+    result, new_message_id = await async_messages_operator.try_strong_edit_message_media(chat_id=user.id, message_id=user.map_message_id, new_photo=map_image, new_caption=user.controlled_ship.get_status(), new_reply_markup=new_reply_markup)
     if result:
         if user.map_message_id != new_message_id:
             asyncio.create_task(try_delete_message(user.id, user.map_message_id))
