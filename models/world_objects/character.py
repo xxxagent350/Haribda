@@ -59,7 +59,11 @@ class Character:
             self.survival *= 2
         elif self.skill == 'Бог морей':
             self.control += 3
-
+    def life_check(self):
+        if self.stamina > 1:
+            return True
+        else:
+            return False
 
 
 
