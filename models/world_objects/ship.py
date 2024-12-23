@@ -30,7 +30,7 @@ class Ship(GameObject):
 
     def register_owner(self, owner):
         """Регистрирует владельца корабля"""
-        self.owenr = owner
+        self.owner = owner
         owner.controlled_ship = self
 
 
