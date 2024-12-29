@@ -5,7 +5,7 @@ from aiogram.types import Message
 
 from variables.bot import bot
 from variables.maps_dict import maps
-from core.action import Action,ActionType
+from models.action import Action,ActionType
 from variables.users_dict import users_dict
 from network import async_messages_operator
 

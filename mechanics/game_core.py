@@ -1,12 +1,9 @@
 import asyncio
-import math
-import time
-from random import randint
 
 from models.world_objects.monster import Monster
 from variables.maps_dict import maps
 from core.vector2 import Vector2
-from core.action import ActionType
+from models.action import ActionType
 from UI import map_visualizer
 
 # Импорт объектов карты
@@ -45,6 +42,13 @@ async def process_game():
                 print(f'Непредвиденная критическая ошибка в game_core.process_game: {exception}')
 
 
+def process_visual_effects(map_):
+    for effect in map_.objects:
+        if type(effect) == Debris:
+            effect.decrement_lifetime(map_, step_delay)
+            map_.add_changed_square(effect)
+
+
 # Логика ботов
 def process_ai_on_map(map_):
     for monster in map_.objects:
@@ -59,7 +63,7 @@ def process_monsters_attack_on_map(map_):
     for monster in map_.objects:
         try:
             if type(monster) == Monster:
-                monster.attack()
+                monster.attack(map_)
         except Exception as exception:
             print(f'Непредвиденная ошибка в game_core.process_monsters_on_map: {exception}')
 
@@ -77,13 +81,20 @@ def process_delayed_actions_on_map(map_, short_update):
             object_ = delayed_action.object_
             action_type = delayed_action.action_type
             action_succeed = False
+
+            # Обработчик движения
             if action_type == ActionType.move:
-                # Обработчик движения
                 map_.add_changed_square(object_)
                 if type(delayed_action.value) == Vector2:
                     action_succeed = object_.try_move_with_delta(delayed_action.value, map_)
                 else:
                     action_succeed = object_.try_move_at_dir(delayed_action.value, map_)
+
+            # Обработчик уничтожения
+            if action_type == ActionType.destroy:
+                if type(object_) == Ship:
+                    map_.add_new_object(Debris(object_.position, 0, 'debris'))
+                map_.try_remove_object(object_)
 
             # Добавляем действие в список на удаление
             delayed_actions_to_remove.append(delayed_action)
@@ -109,13 +120,6 @@ def update_visual_map(map_):
     showed_changed_squares = dict() # Сюда добавляем квадраты на карте, которые уже были "погашены", то есть игроки их увидели
     users_to_update_map = dict()
     for i,object_ in enumerate(map_.objects):
-        if type(object_) == Debris:
-            if object_.decrement_lifetime():
-                map_.objects.pop(i)
-        if type(object_) == Ship:
-            if not object_.life_check():
-                map_.objects.append(Debris(object_.position,0,"debris", 3))
-                map_.objects.pop(i)
         if type(object_) == Ship and type(object_.owner) == User:
             min_view_limits = object_.position.summ(Vector2(-object_.view_range - render_out_of_border_range, -object_.view_range - render_out_of_border_range))
             max_view_limits = object_.position.summ(Vector2(object_.view_range + render_out_of_border_range, object_.view_range + render_out_of_border_range))

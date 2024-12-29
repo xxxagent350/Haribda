@@ -1,6 +1,6 @@
 import math
 
-from core.action import ActionType, Action
+from models.action import ActionType, Action
 from core.vector2 import Vector2
 from models.world_objects.game_object import GameObject
 from core import images_operator
@@ -92,7 +92,7 @@ class Monster(GameObject):
         except Exception as exception:
             print(f'Непредвиденная ошибка в monster.process_monster_logics: {exception}')
 
-    def attack(self):
+    def attack(self, map_):
         # Перезарядка
         self.short_updates_from_last_attack += 1
         if not self.short_updates_from_last_attack >= self.reload:
@@ -104,4 +104,4 @@ class Monster(GameObject):
                 if distance < self.attack_range + 0.5:
                     # Атака
                     self.short_updates_from_last_attack = 0
-                    self.target.take_damage(self.damage, 'monster')
+                    self.target.take_damage(self.damage, map_, 'monster')

@@ -1,5 +1,6 @@
 from core.images_operator import get_image_path_from_ship_name
 from core.vector2 import Vector2
+from models.action import Action, ActionType
 from models.user import User
 from models.world_objects.game_object import GameObject
 from models.world_objects.character import Character
@@ -35,7 +36,7 @@ class Ship(GameObject):
         self.owner = owner
         owner.controlled_ship = self
 
-    def take_damage(self, damage, damage_type="physical"):
+    def take_damage(self, damage, map_, damage_type="physical"):
         """
         Функция получения кораблём урона и проверки на уничтожение.
         :param damage: Целое положительное число
@@ -51,20 +52,15 @@ class Ship(GameObject):
 
         if self.hp <= 0:
             # При hp <= 0 корабль должен получать урон за каждое перемещение с шансом, зависящим от опыта управления капитана
+            map_.add_new_delayed_action(Action(self, ActionType.destroy), True, False)
             return True
         else:
             return False
-
-    def life_check(self):
-        if self.hp < 0:
-            return False
-        else:
-            return True
 
     def try_move_at_dir(self, direction, map_) -> bool:
         self.rotation = direction
         if self.hp == 0 and random.randint(1,2) == 1:
-            self.take_damage( 1 )
+            self.take_damage(1, map_)
         match direction:
             case 0:  # Вверх
                 return self.try_move_with_delta(Vector2(0, 1), map_)

@@ -15,12 +15,13 @@ def get_cv2_image_from_path(path_):
         return get_cv2_image_from_path(path_)
 
 def get_image_path_from_ship_name(ship_name):
-    # Определяем корневую папку проекта (там, где лежит основной файл проекта)
     return get_global_path(path.join('sprites', 'ships', f'{ship_name}.png'))
 
 def get_image_path_from_monster_name(monster_name):
-    # Определяем корневую папку проекта (там, где лежит основной файл проекта)
     return get_global_path(path.join('sprites', 'monsters', f'{monster_name}.png'))
+
+def get_image_path_from_effect_name(effect_name):
+    return get_global_path(path.join('sprites', 'effects', f'{effect_name}.png'))
 
 def get_ship_image_from_name(ship_name):
     image_path = get_image_path_from_ship_name(ship_name)

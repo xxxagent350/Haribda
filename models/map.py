@@ -17,6 +17,13 @@ class Map:
         self.objects.append(object_)
         self.add_changed_square(object_)
 
+    def try_remove_object(self, object_) -> bool:
+        if object_ in self.objects:
+            self.objects.remove(object_)
+            return True
+        else:
+            return False
+
     def add_new_delayed_action(self, new_action, short_action = False, override = True):
         """
         Добавляет ожидаемое действие в список действий на карте
